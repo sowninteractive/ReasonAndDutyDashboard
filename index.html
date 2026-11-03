@@ -27,9 +27,12 @@ body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-ap
 .ib{background:none;border:0;color:var(--mute);cursor:pointer;padding:.3rem;border-radius:6px;display:inline-flex;transition:color .15s,background .15s}
 .ib:hover:not(:disabled){color:var(--text);background:var(--card2)}
 .ib:disabled{opacity:.25;cursor:default}
+.ib.act{gap:.35rem;padding:.3rem .6rem;font-size:.75rem;border:1px solid var(--line);align-items:center}
+.ib.act:hover:not(:disabled){border-color:var(--acc)}
+.ib svg{flex:none}
 .ib.on{color:var(--acc2)}.ib.on svg{fill:currentColor}
 .ib.del:hover{color:var(--bad)}
-input[type=text],input[type=search],textarea,select{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.55rem .75rem;width:100%;font-size:.9rem;outline:none;transition:border-color .15s,box-shadow .15s}
+input[type=text],input[type=search],input[type=number],textarea,select{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.55rem .75rem;width:100%;font-size:.9rem;outline:none;transition:border-color .15s,box-shadow .15s}
 input:focus,textarea:focus,select:focus,.btn:focus-visible,.ib:focus-visible,.nav:focus-visible{border-color:var(--acc);box-shadow:0 0 0 3px var(--accd)}
 input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:none;width:1.15rem;height:1.15rem;border:2px solid #475569;border-radius:6px;cursor:pointer;display:inline-grid;place-content:center;background:transparent;transition:background .2s,border-color .2s,transform .2s}
 input[type=checkbox]::after{content:"";width:.28rem;height:.55rem;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);transition:transform .2s;margin-top:-2px}
@@ -57,6 +60,30 @@ input[type=checkbox]:checked::after{transform:rotate(45deg) scale(1)}
 @keyframes vin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 #toast{position:fixed;bottom:1.25rem;left:50%;transform:translate(-50%,12px);background:var(--card2);border:1px solid var(--acc);padding:.6rem 1rem;border-radius:10px;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;gap:.5rem;align-items:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+body[data-theme=obsidian]{--bg:#09090b;--card:#131316;--card2:#1c1c21;--line:#2a2a30}
+body[data-theme=amber]{--bg:#1a1308;--card:#2a1f0e;--card2:#382913;--line:#4d3a1a}
+body[data-theme=forest]{--bg:#0b1712;--card:#12261c;--card2:#1a3528;--line:#254a37}
+body[data-theme=navy]{--bg:#0a1428;--card:#11213f;--card2:#182d55;--line:#26407a}
+body[data-view=eastern]{--acc:#fb923c;--acc2:#fcd34d;--accd:rgba(251,146,60,.13)}
+body[data-view=reflect]{--acc:#a78bfa;--acc2:#f0abfc;--accd:rgba(167,139,250,.14)}
+body[data-view=media]{--acc:#fb7185;--acc2:#fdba74;--accd:rgba(251,113,133,.13)}
+.why{border-left:3px solid var(--acc);background:var(--accd);border-radius:0 8px 8px 0;padding:.5rem .75rem}
+.why textarea{background:transparent;border:0;padding:0;resize:none;font-style:italic;line-height:1.5;box-shadow:none!important}
+.pri1{color:#fca5a5;border-color:#f87171;background:rgba(248,113,113,.12)}
+.pri2{color:#93c5fd;border-color:#60a5fa;background:rgba(96,165,250,.12)}
+.pri3{color:#cbd5e1;border-color:#64748b}
+.tagchip{display:inline-flex;align-items:center;font-size:.72rem;padding:.1rem .55rem;border-radius:999px;border:1px solid}
+.dot{display:inline-block;width:.55rem;height:.55rem;border-radius:50%;margin-right:.35rem}
+.divider{display:flex;align-items:center;gap:.75rem;margin:2rem 0 1.1rem;color:var(--mute);font-size:.85rem;font-weight:600}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.strip{display:flex;gap:.75rem;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:.4rem}
+.strip>div{flex:0 0 min(22rem,85%);scroll-snap-align:start}
+.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#tagPop{position:absolute;z-index:40;width:17rem;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.vid{aspect-ratio:16/9;width:100%;border:0;border-radius:8px}
+details.story[open]{border-color:var(--acc)}
+details.story summary{padding:.1rem 0}
+#breathCircle{width:9rem;height:9rem;border-radius:50%;border:2px solid var(--acc);background:radial-gradient(circle,var(--accd),transparent 72%);display:grid;place-items:center;transform:scale(.55);text-align:center}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -72,6 +99,9 @@ input[type=checkbox]:checked::after{transform:rotate(45deg) scale(1)}
       <button class="nav active" data-view="goals">🎯 <span>Goal Engine</span></button>
       <button class="nav" data-view="bible">✝️ <span>Biblical Wisdom</span></button>
       <button class="nav" data-view="logic">🗽 <span>Logic &amp; Freedom</span></button>
+      <button class="nav" data-view="eastern">☸️ <span>Eastern Wisdom</span></button>
+      <button class="nav" data-view="reflect">📓 <span>Reflection</span></button>
+      <button class="nav" data-view="media">🎧 <span>Media &amp; Focus</span></button>
     </nav>
   </aside>
 
@@ -79,26 +109,43 @@ input[type=checkbox]:checked::after{transform:rotate(45deg) scale(1)}
     <header class="px-4 md:px-8 py-4" style="border-bottom:1px solid var(--line)">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div><div id="clockDate" class="font-semibold"></div><div id="clockTime" class="mute text-sm"></div></div>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2">
+          <select id="themeSel" class="btn" style="width:auto" aria-label="Theme"></select>
           <button class="btn" id="exportBtn" aria-label="Backup / Export Data"><i data-lucide="download" class="w-4 h-4"></i><span>Backup / Export Data</span></button>
           <button class="btn" id="importBtn" aria-label="Import Data"><i data-lucide="upload" class="w-4 h-4"></i><span>Import Data</span></button>
           <input type="file" id="importFile" accept="application/json" class="hidden">
         </div>
       </div>
-      <div class="inset mt-4 px-4 py-3">
+      <div class="grid gap-3 mt-4 lg:grid-cols-2"><div class="inset px-4 py-3">
         <div class="flex items-center gap-2 mb-2 text-sm font-semibold"><i data-lucide="target" class="w-4 h-4" style="color:#fbbf24"></i>Daily Focus <span class="mute font-normal" id="focusCount"></span></div>
         <div id="focusList" class="flex flex-wrap gap-2"></div>
       </div>
+      <div class="inset px-4 py-3">
+        <div class="flex items-center justify-between mb-2"><div class="text-sm font-semibold flex items-center gap-2"><i data-lucide="timer" class="w-4 h-4 acc2"></i>Focus Timer</div><div class="text-2xl font-semibold" id="tDisp" style="font-variant-numeric:tabular-nums">25:00</div></div>
+        <div class="bar mb-3"><div id="tBar" style="width:0"></div></div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button class="btn btn-acc" id="tToggle"></button><button class="btn" id="tReset">Reset</button>
+          <span id="tPresets" class="flex gap-1"><button class="chip active" data-m="25">25m</button><button class="chip" data-m="50">50m</button></span>
+          <input type="number" id="tCustom" min="1" max="180" placeholder="min" aria-label="Custom minutes" style="width:4.5rem"><button class="btn" id="tSet">Set</button>
+        </div>
+        <select id="tTask" class="mt-3" aria-label="Attach timer to a sub-task"></select>
+      </div></div>
     </header>
 
     <main class="flex-1 px-4 md:px-8 py-6">
       <section id="view-goals" class="view active">
         <h1 class="text-2xl font-semibold mb-4">Goal Engine</h1>
-        <div class="flex gap-2 mb-5 max-w-2xl">
-          <input type="text" id="goalInput" placeholder="Quick add: type a goal and press Enter" maxlength="80" aria-label="Quick add goal" autofocus>
-          <button class="btn btn-acc" id="addGoal"><i data-lucide="plus" class="w-4 h-4"></i>Add</button>
+        <div class="card mb-5" id="wisdomBar"></div>
+        <div class="card mb-5">
+          <div class="text-sm font-semibold mb-3">New goal: start with why</div>
+          <div class="grid gap-2 md:grid-cols-12">
+            <input type="text" id="goalInput" class="md:col-span-4" placeholder="Quick add: goal name, then Enter" maxlength="80" aria-label="Quick add goal" autofocus>
+            <input type="text" id="whyInput" class="md:col-span-4" placeholder="Why does this matter to you?" maxlength="200" aria-label="Why">
+            <select id="priInput" class="md:col-span-2" aria-label="Priority"><option value="1">#1 Priority</option><option value="2" selected>#2 Secondary</option><option value="3">#3 Backlog</option></select>
+            <button class="btn btn-acc md:col-span-2" id="addGoal" style="justify-content:center"><i data-lucide="plus" class="w-4 h-4"></i>Add goal</button>
+          </div>
         </div>
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
           <div class="flex gap-2" id="goalFilters">
             <button class="chip active" data-f="all">All Goals</button>
             <button class="chip" data-f="active">Active</button>
@@ -106,7 +153,8 @@ input[type=checkbox]:checked::after{transform:rotate(45deg) scale(1)}
           </div>
           <button class="btn" id="clearDone"><i data-lucide="archive" class="w-4 h-4"></i>Clear Completed Goals</button>
         </div>
-        <div id="goalGrid" class="grid gap-5 grid-cols-1 xl:grid-cols-2"></div>
+        <div class="flex flex-wrap items-center gap-2 mb-5" id="tagBar"></div>
+        <div id="goalGrid"></div>
       </section>
 
       <section id="view-bible" class="view">
@@ -154,9 +202,87 @@ input[type=checkbox]:checked::after{transform:rotate(45deg) scale(1)}
           <div class="mute text-xs mt-2" id="logicSaved"></div>
         </div>
       </section>
+      <section id="view-eastern" class="view">
+        <h1 class="text-2xl font-semibold mb-2">Buddhist Parables &amp; Eastern Wisdom</h1>
+        <p class="mute text-sm mb-5">Teaching stories, core concepts, and sayings from Buddhist, Taoist, and Zen traditions. Stories are short retellings and sayings are paraphrases, not scripture translations.</p>
+        <div id="easternFavs" class="mb-6"></div>
+        <h2 class="text-lg font-semibold mb-3 flex items-center gap-2"><i data-lucide="sun" class="w-4 h-4 acc2"></i>Parable of the day</h2>
+        <div id="dailyParable" class="mb-8"></div>
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <input type="search" id="eastSearch" placeholder="Search stories and sayings" class="max-w-sm" aria-label="Search Eastern wisdom">
+          <div class="flex flex-wrap gap-2" id="eastTags"></div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h2 class="text-lg font-semibold">Parables &amp; teaching stories</h2>
+          <div class="flex gap-2"><button class="btn" id="expandAll">Expand all</button><button class="btn" id="collapseAll">Collapse all</button></div>
+        </div>
+        <div id="parables" class="grid gap-3 mb-8"></div>
+        <h2 class="text-lg font-semibold mb-3">Core teachings</h2>
+        <div id="teachings" class="grid gap-5 grid-cols-1 lg:grid-cols-3 mb-8"></div>
+        <h2 class="text-lg font-semibold mb-1">Sayings</h2>
+        <div id="sayings" class="mb-8"></div>
+        <div class="card mb-6">
+          <h2 class="font-semibold mb-1 flex items-center gap-2"><i data-lucide="wind" class="w-4 h-4 acc"></i>Breathing practice</h2>
+          <p class="mute text-sm mb-4">A short guided exercise to reset your attention between work sessions.</p>
+          <div class="flex flex-wrap items-center gap-6">
+            <div id="breathCircle"><div><div id="breathLabel" class="text-sm font-semibold">Ready</div><div id="breathCount" class="text-2xl font-semibold acc"></div></div></div>
+            <div class="grid gap-3" style="min-width:14rem">
+              <select id="breathPat" aria-label="Breathing pattern"></select>
+              <button class="btn btn-acc" id="breathBtn" style="justify-content:center">Start</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2 class="font-semibold mb-1">Contemplation notes</h2>
+          <p class="mute text-sm mb-3">Write what a story or saying stirred up. Saved automatically.</p>
+          <textarea id="easternNote" rows="5" placeholder="What does today's teaching ask of you?"></textarea>
+          <div class="mute text-xs mt-2" id="easternSaved"></div>
+        </div>
+      </section>
+
+      <section id="view-reflect" class="view">
+        <h1 class="text-2xl font-semibold mb-5">Progress &amp; Self-Reflection</h1>
+        <div id="reflStats" class="grid gap-3 grid-cols-2 md:grid-cols-5 mb-5"></div>
+        <div class="card mb-6">
+          <h2 class="font-semibold mb-3">End-of-day review</h2>
+          <div class="grid gap-3 md:grid-cols-2">
+            <textarea id="rWins" rows="3" placeholder="Successes and wins today"></textarea>
+            <textarea id="rObs" rows="3" placeholder="Obstacles I ran into"></textarea>
+            <textarea id="rLes" rows="3" placeholder="Lessons learned"></textarea>
+            <textarea id="rRev" rows="3" placeholder="Overall review / plan for tomorrow"></textarea>
+          </div>
+          <button class="btn btn-acc mt-3" id="rSave"><i data-lucide="save" class="w-4 h-4"></i>Save entry</button>
+        </div>
+        <h2 class="text-lg font-semibold mb-3">Past entries</h2>
+        <div id="reflList" class="grid gap-4"></div>
+      </section>
+
+      <section id="view-media" class="view">
+        <h1 class="text-2xl font-semibold mb-5">Media &amp; Focus Hub</h1>
+        <div class="card mb-6">
+          <h2 class="font-semibold mb-3">Save a link</h2>
+          <div class="grid gap-2 md:grid-cols-12">
+            <select id="mType" class="md:col-span-2" aria-label="Type"><option value="video">Video</option><option value="audio">Audio</option></select>
+            <input type="text" id="mTitle" class="md:col-span-3" placeholder="Title" maxlength="80">
+            <input type="text" id="mUrl" class="md:col-span-5" placeholder="YouTube link or audio stream URL">
+            <button class="btn btn-acc md:col-span-2" id="mAdd" style="justify-content:center"><i data-lucide="plus" class="w-4 h-4"></i>Save</button>
+          </div>
+          <p class="mute text-xs mt-2">YouTube links play in an embedded player. Direct audio URLs (mp3, ogg, stream) play in the page. Other links open in a new tab. If an embed shows an error when running from a local file, use the open-in-new-tab icon.</p>
+        </div>
+        <div id="mediaGrid" class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"></div>
+        <div class="card mt-6">
+          <h2 class="font-semibold mb-1">Ambient noise generator</h2>
+          <p class="mute text-sm mb-3">Built-in focus noise, no link needed.</p>
+          <div class="flex flex-wrap items-center gap-2">
+            <button class="btn" data-n="white">White noise</button><button class="btn" data-n="brown">Brown noise</button><button class="btn" data-n="stop">Stop</button>
+            <input type="range" id="ambVol" min="0" max="1" step="0.05" value="0.3" style="width:9rem" aria-label="Volume">
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 </div>
+<div id="tagPop" class="card hidden" role="dialog" aria-label="Tags"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -165,7 +291,14 @@ const $=id=>document.getElementById(id);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>new Date().toISOString().slice(0,10);
-const icons=()=>window.lucide&&lucide.createIcons();
+const icons=()=>{try{window.lucide&&lucide.createIcons();}catch(e){console.warn('Icon load failed',e);}};
+const SV=p=>`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+  copy:SV('<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>'),
+  star:SV('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'),
+  tag:SV('<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/>'),
+  trash:SV('<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>')
+};
 
 /* ===== Content data ===== */
 const V=(ref,cat,tags,text,ver)=>({ref,cat,tags,text,ver:ver||'ESV',part:'Scripture'});
@@ -284,7 +417,7 @@ M(`Grit, Resilience & Breaking Generational Chains`,['Growth','Work'],`Do not as
 /* ===== Store (localStorage) ===== */
 const Store={
   KEY:'focus_dashboard_v1',
-  defaults:()=>({goals:[],archived:[],filter:'all',bibleNote:'',logicNote:'',favs:[],customQuotes:[],checks:{date:today(),done:[]}}),
+  defaults:()=>({goals:[],archived:[],filter:'all',tags:[],itemTags:{},tagFilter:null,theme:'slate',media:[],reflections:[],focusLog:{},timerTask:null,bibleNote:'',logicNote:'',favs:[],customQuotes:[],checks:{date:today(),done:[]}}),
   state:null,
   load(){let s={};try{s=JSON.parse(localStorage.getItem(this.KEY))||{};}catch(e){}this.state=Object.assign(this.defaults(),s);return this.state;},
   save(){try{localStorage.setItem(this.KEY,JSON.stringify(this.state));}catch(e){UI.toast('Storage unavailable: changes will not persist.');}}
@@ -300,7 +433,7 @@ const UI={
     this.toast('Copied to clipboard','clipboard-check');
   },
   show(v){
-    document.body.dataset.view=v;
+    document.body.dataset.view=v;if(v==='reflect')Review.render();if(v!=='eastern')Breath.stop();
     document.querySelectorAll('.view').forEach(e=>e.classList.toggle('active',e.id==='view-'+v));
     document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.view===v));
     $('nav').classList.remove('open');$('menuBtn').setAttribute('aria-expanded','false');
@@ -316,53 +449,83 @@ const UI={
 };
 
 /* ===== Goals ===== */
+const PRI={1:'#1 Priority',2:'#2 Secondary',3:'#3 Backlog'};
 const Goals={
   prev:{},
   pct:g=>g.steps.length?Math.round(g.steps.filter(s=>s.done).length/g.steps.length*100):0,
   done:g=>g.steps.length>0&&g.steps.every(s=>s.done),
   badge:g=>{const n=g.steps.length,d=g.steps.filter(s=>s.done).length;return n?`${d}/${n} Steps Completed - ${Goals.pct(g)}%`:'No steps yet';},
   pinned:()=>S.goals.reduce((n,g)=>n+g.steps.filter(s=>s.pinned).length,0),
+  touch(g){g.touched=today();},
+  fstat:s=>(s.focusSec||s.sessions)?`🍅 ${s.sessions||0} · ${Math.round((s.focusSec||0)/60)}m`:'',
   stepHtml(g,s,i){return `<li class="step flex items-center gap-3 py-2 ${s.done?'done':''}" data-s="${s.id}">
     <input type="checkbox" data-a="toggle" ${s.done?'checked':''} aria-label="Complete step">
     <span class="step-text flex-1 text-sm break-words">${esc(s.text)}</span>
+    <span class="fstat mute text-xs">${this.fstat(s)}</span>
     <span class="acts flex">
       <button class="ib" data-a="up" ${i===0?'disabled':''} title="Move up" aria-label="Move up"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>
       <button class="ib" data-a="down" ${i===g.steps.length-1?'disabled':''} title="Move down" aria-label="Move down"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
+      <button class="ib" data-a="focus" title="Attach focus timer" aria-label="Attach focus timer"><i data-lucide="timer" class="w-4 h-4"></i></button>
       <button class="ib ${s.pinned?'on':''}" data-a="pin" title="${s.pinned?'Unpin from':'Pin to'} Daily Focus" aria-label="Pin to Daily Focus"><i data-lucide="${s.pinned?'pin-off':'pin'}" class="w-4 h-4"></i></button>
       <button class="ib del" data-a="delStep" title="Delete step" aria-label="Delete step"><i data-lucide="x" class="w-4 h-4"></i></button>
     </span></li>`;},
-  render(){
-    document.querySelectorAll('#goalFilters .chip').forEach(c=>c.classList.toggle('active',c.dataset.f===S.filter));
-    const list=S.goals.filter(g=>S.filter==='all'||(S.filter==='completed'?this.done(g):!this.done(g)));
-    $('goalGrid').innerHTML=list.length?list.map(g=>`<article class="card" data-g="${g.id}">
+  cardHtml(g){return `<article class="card" data-g="${g.id}">
       <div class="flex items-start justify-between gap-3 mb-3">
-        <div class="min-w-0"><h3 class="font-semibold text-lg break-words mb-2">${esc(g.title)}</h3><span class="badge ${this.done(g)?'full':''}" data-badge>${this.badge(g)}</span></div>
-        <button class="ib del" data-a="delGoal" title="Delete goal" aria-label="Delete goal"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2 mb-2"><span class="tag pri${g.pri}">${PRI[g.pri]}</span>${g.tags.map(t=>Tags.chip(t)).join('')}<button class="ib" data-tag="goal" title="Edit tags" aria-label="Edit tags"><i data-lucide="tag" class="w-4 h-4"></i></button></div>
+          <h3 class="font-semibold text-lg break-words">${esc(g.title)}</h3>
+        </div>
+        <div class="flex items-center gap-1 flex-none">
+          <select data-a="pri" aria-label="Priority" style="width:auto;padding:.25rem .4rem;font-size:.75rem">${[1,2,3].map(n=>`<option value="${n}" ${g.pri===n?'selected':''}>${PRI[n]}</option>`).join('')}</select>
+          <button class="ib del" data-a="delGoal" title="Delete goal" aria-label="Delete goal"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        </div>
       </div>
+      <div class="mute text-xs mb-1">Why this matters</div>
+      <div class="why mb-4"><textarea data-a="why" rows="2" placeholder="Write your why. What will this change for you?" aria-label="Why">${esc(g.why)}</textarea></div>
+      <div class="mb-2"><span class="badge ${this.done(g)?'full':''}" data-badge>${this.badge(g)}</span></div>
       <div class="bar mb-4"><div data-bar data-w="${this.pct(g)}" style="width:${this.prev[g.id]??0}%"></div></div>
       <ul class="mb-4" style="list-style:none;margin:0;padding:0">${g.steps.map((s,i)=>this.stepHtml(g,s,i)).join('')}</ul>
       <div class="flex gap-2"><input type="text" class="stepInput" placeholder="Add a sub-step" maxlength="120" aria-label="New sub-step"><button class="btn" data-a="addStep"><i data-lucide="plus" class="w-4 h-4"></i>Add</button></div>
-    </article>`).join('')
-    :`<div class="card mute text-center xl:col-span-2" style="padding:2.5rem">${S.goals.length?'No goals match this filter.':'No goals yet. Type a goal above and press Enter.'}</div>`;
+    </article>`;},
+  render(){
+    document.querySelectorAll('#goalFilters .chip').forEach(c=>c.classList.toggle('active',c.dataset.f===S.filter));
+    const list=S.goals.filter(g=>(S.filter==='all'||(S.filter==='completed'?this.done(g):!this.done(g)))&&(!S.tagFilter||g.tags.includes(S.tagFilter)));
+    const rank=(a,b)=>(this.done(a)-this.done(b))||(a.pri-b.pri);
+    const now=list.filter(g=>g.touched===today()).sort((a,b)=>a.pri-b.pri),old=list.filter(g=>g.touched!==today()).sort(rank);
+    const grid=a=>`<div class="grid gap-5 grid-cols-1 xl:grid-cols-2">${a.map(g=>this.cardHtml(g)).join('')}</div>`;
+    $('goalGrid').innerHTML=!list.length
+      ?`<div class="card mute text-center" style="padding:2.5rem">${S.goals.length?'No goals match these filters.':'No goals yet. Name a goal, write your why, and press Enter.'}</div>`
+      :`<h2 class="font-semibold mb-3">Active Today <span class="mute font-normal text-sm">(${now.length})</span></h2>`+(now.length?grid(now):'<p class="mute text-sm">Nothing touched today. Work on any goal below to bring it here.</p>')
+       +(old.length?`<div class="divider"><span>Previous Days / Older Goals (${old.length})</span></div>`+grid(old):'');
     requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('[data-bar]').forEach(b=>{b.style.width=b.dataset.w+'%';this.prev[b.closest('[data-g]').dataset.g]=+b.dataset.w;})));
-    this.renderFocus();icons();
+    this.renderFocus();Tags.renderBar();Timer.renderTasks();icons();
   },
-  paint(g){ /* in-place update so checkbox/bar/strike animate */
+  paint(g){
     const card=document.querySelector(`#goalGrid [data-g="${g.id}"]`);if(!card)return;
     const b=card.querySelector('[data-badge]');b.textContent=this.badge(g);b.classList.toggle('full',this.done(g));
     const bar=card.querySelector('[data-bar]');bar.style.width=this.pct(g)+'%';this.prev[g.id]=this.pct(g);
     g.steps.forEach(s=>{const li=card.querySelector(`[data-s="${s.id}"]`);if(li){li.classList.toggle('done',s.done);li.querySelector('input').checked=s.done;}});
   },
+  paintFocus(){S.goals.forEach(g=>{const c=document.querySelector(`#goalGrid [data-g="${g.id}"]`);if(!c)return;g.steps.forEach(s=>{const f=c.querySelector(`[data-s="${s.id}"] .fstat`);if(f)f.textContent=this.fstat(s);});});},
   renderFocus(){
     const pins=[];S.goals.forEach(g=>g.steps.forEach(s=>s.pinned&&pins.push({g,s})));
     $('focusCount').textContent=`(${pins.length}/3)`;
-    $('focusList').innerHTML=pins.length?pins.map(({g,s})=>`<span class="pin-chip ${s.done?'done':''}" data-g="${g.id}" data-s="${s.id}">
+    $('focusList').innerHTML=pins.length?pins.map(({g,s})=>`<span class="pin-chip" data-g="${g.id}" data-s="${s.id}">
       <input type="checkbox" data-a="toggle" ${s.done?'checked':''} aria-label="Complete focus step">
       <span title="${esc(g.title)}" style="${s.done?'text-decoration:line-through;color:var(--mute)':''}">${esc(s.text)}</span>
       <button class="ib" data-a="pin" aria-label="Unpin"><i data-lucide="x" class="w-3 h-3"></i></button></span>`).join('')
       :'<span class="mute text-sm">Pin up to 3 sub-steps from your goals to keep them here.</span>';
   },
-  add(){const t=$('goalInput').value.trim();if(!t)return;S.goals.unshift({id:uid(),title:t,steps:[]});$('goalInput').value='';Store.save();this.render();UI.toast('Goal added','target');},
+  renderWisdom(){
+    const list=S.favs.map(id=>Hub.items[id]).filter(Boolean);
+    $('wisdomBar').innerHTML=`<div class="flex items-center justify-between mb-3"><h2 class="font-semibold flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4 acc2"></i>Favorited Wisdom &amp; Quotes</h2><span class="mute text-xs">${list.length} saved</span></div>`+
+      (list.length?`<div class="strip">${list.map(i=>`<div class="inset p-3"><p class="serif clamp" title="${esc(i.text)}">“${esc(i.text)}”</p><div class="text-xs acc2 mt-2">${esc(i.label)}</div></div>`).join('')}</div>`:(()=>{const d=Eastern.dailySaying();return '<p class="mute text-sm mb-2">Star scripture and quotes in the other tabs and they will stream here. Today\'s saying:</p>'+(d?`<div class="inset p-3"><p class="serif clamp">“${esc(d.text)}”</p><div class="text-xs acc2 mt-2">${esc(d.label)}</div></div>`:'');})());
+  },
+  add(){
+    const t=$('goalInput').value.trim();if(!t)return;
+    S.goals.unshift({id:uid(),title:t,why:$('whyInput').value.trim(),pri:+$('priInput').value,tags:[],steps:[],created:today(),touched:today()});
+    $('goalInput').value='';$('whyInput').value='';Store.save();this.render();UI.toast('Goal added','target');
+  },
   clearDone(){
     const done=S.goals.filter(g=>this.done(g));if(!done.length)return UI.toast('No completed goals to clear','info');
     done.forEach(g=>g.steps.forEach(s=>s.pinned=false));
@@ -372,27 +535,31 @@ const Goals={
   },
   act(e){
     const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
-    if(!['toggle','pin','up','down','delStep','delGoal','addStep'].includes(a))return;
+    if(!['toggle','pin','up','down','delStep','delGoal','addStep','focus'].includes(a))return;
     const host=el.closest('[data-g]');const g=host&&S.goals.find(x=>x.id===host.dataset.g);if(!g)return;
     const sEl=el.closest('[data-s]');const s=sEl&&g.steps.find(x=>x.id===sEl.dataset.s);
-    if(a==='toggle'){if(e.type!=='change'||!s)return;s.done=el.checked;Store.save();this.paint(g);this.renderFocus();icons();return;}
+    if(a==='toggle'){if(e.type!=='change'||!s)return;s.done=el.checked;this.touch(g);Store.save();this.paint(g);this.renderFocus();Timer.renderTasks();icons();return;}
     if(e.type==='change')return;
+    if(a==='focus'){if(!s)return;S.timerTask=s.id;Store.save();Timer.renderTasks();return UI.toast('Timer attached to this sub-task','timer');}
     if(a==='delGoal'){if(!confirm('Delete this goal and all its steps?'))return;S.goals=S.goals.filter(x=>x!==g);}
-    else if(a==='addStep'){const i=host.querySelector('.stepInput'),t=i.value.trim();if(!t)return;g.steps.push({id:uid(),text:t,done:false,pinned:false});}
+    else if(a==='addStep'){const i=host.querySelector('.stepInput'),t=i.value.trim();if(!t)return;g.steps.push({id:uid(),text:t,done:false,pinned:false});this.touch(g);}
     else if(!s)return;
     else if(a==='delStep')g.steps=g.steps.filter(x=>x!==s);
-    else if(a==='up'||a==='down'){const i=g.steps.indexOf(s),j=a==='up'?i-1:i+1;if(j<0||j>=g.steps.length)return;[g.steps[i],g.steps[j]]=[g.steps[j],g.steps[i]];}
+    else if(a==='up'||a==='down'){const i=g.steps.indexOf(s),j=a==='up'?i-1:i+1;if(j<0||j>=g.steps.length)return;[g.steps[i],g.steps[j]]=[g.steps[j],g.steps[i]];this.touch(g);}
     else if(a==='pin'){if(!s.pinned&&this.pinned()>=3)return UI.toast('Daily Focus holds 3 steps. Unpin one first.','pin');s.pinned=!s.pinned;}
     Store.save();this.render();
   },
   init(){
     $('addGoal').addEventListener('click',()=>this.add());
-    $('goalInput').addEventListener('keydown',e=>{if(e.key==='Enter')this.add();});
+    ['goalInput','whyInput'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')this.add();}));
     $('clearDone').addEventListener('click',()=>this.clearDone());
     $('goalFilters').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;S.filter=c.dataset.f;Store.save();this.render();});
     const h=e=>{if(e.target.closest('#goalGrid,#focusList'))this.act(e);};
     document.addEventListener('click',e=>{if(!e.target.matches('input[type=checkbox]'))h(e);});
     document.addEventListener('change',e=>{if(e.target.matches('input[type=checkbox]'))h(e);});
+    const gOf=el=>S.goals.find(x=>x.id===el.closest('[data-g]').dataset.g);
+    $('goalGrid').addEventListener('change',e=>{if(e.target.dataset.a!=='pri')return;const g=gOf(e.target);g.pri=+e.target.value;this.touch(g);Store.save();this.render();UI.toast('Moved to '+PRI[g.pri],'flag');});
+    $('goalGrid').addEventListener('input',e=>{if(e.target.dataset.a!=='why')return;const g=gOf(e.target);g.why=e.target.value;this.touch(g);clearTimeout(this._w);this._w=setTimeout(()=>Store.save(),300);});
     $('goalGrid').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('stepInput'))e.target.closest('article').querySelector('[data-a=addStep]').click();});
     this.render();
   }
@@ -408,6 +575,8 @@ const Hub={
     Data.verses.forEach(v=>add({id:'v:'+v.ref,text:v.text,label:`${v.ref} (${v.ver})`,sub:`${esc(v.ref)} (${v.ver})`,tags:v.tags,kind:'verse',cat:v.cat,part:v.part},1));
     Data.saints.forEach((s,i)=>add({id:'s'+i,text:s.text,label:s.by,sub:`<b>${esc(s.by)}</b>`,tags:s.tags,kind:'verse',q:1,flag:s.flag,cat:s.cat,part:s.part},1));
     Data.quotes.concat(S.customQuotes).forEach(q=>add({id:q.id,text:q.text,label:q.by+(q.src?`, ${q.src}`:''),sub:`<b>${esc(q.by)}</b>${q.src?`<br><span class="mute">${esc(q.src)}</span>`:''}`,tags:q.tags,kind:'quote',custom:q.id[0]==='c',flag:q.flag,cat:q.cat||(q.id[0]==='c'?'My quotes':'Liberty & Reason')}));
+    Data.sayings.forEach((x,i)=>add({id:'w'+i,text:x.text,label:`${x.by}, ${x.src}`,sub:`<b>${esc(x.by)}</b><br><span class="mute">${esc(x.src)}</span>`,tags:x.tags,kind:'wisdom',q:1,cat:x.cat}));
+    Data.parables.forEach((p,i)=>add({id:'p'+i,text:`${p.story} Reflection: ${p.lesson}`,label:`${p.title} (${p.src})`,sub:`<b>${esc(p.title)}</b><br><span class="mute">${esc(p.src)}</span>`,tags:p.tags,kind:'wisdom',cat:'Parables'}));
   },
   grouped(list){
     let part='';
@@ -417,24 +586,28 @@ const Hub={
       return h+`<h3 class="text-lg font-semibold mb-3 mt-6">${esc(c)}</h3><div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">${items.map(i=>this.card(i)).join('')}</div>`;
     }).join('');
   },
+  actions(it){
+    const fav=S.favs.includes(it.id);
+    return `<div class="flex flex-wrap items-center justify-end gap-2" style="border-top:1px solid var(--line);padding-top:.6rem">
+        ${it.custom?`<button class="ib act del" data-h="del" title="Delete my quote" aria-label="Delete quote">${IC.trash}<span>Delete</span></button>`:''}
+        <button class="ib act" data-tag="item" title="Edit tags" aria-label="Edit tags">${IC.tag}<span>Tag</span></button>
+        <button class="ib act" data-h="copy" title="Copy to clipboard" aria-label="Copy to clipboard">${IC.copy}<span>Copy</span></button>
+        <button class="ib act ${fav?'on':''}" data-h="fav" title="${fav?'Remove favorite':'Add to favorites'}" aria-pressed="${fav}" aria-label="Favorite">${IC.star}<span>${fav?'Saved':'Favorite'}</span></button>
+      </div>`;
+  },
   card(it){
     const fav=S.favs.includes(it.id);
     return `<div class="card flex flex-col justify-between gap-3" data-id="${esc(it.id)}">
       <p class="serif">${it.kind==='quote'||it.q?'“'+esc(it.text)+'”':esc(it.text)}</p>
-      <div class="flex items-end justify-between gap-2">
-        <div class="text-sm acc2">${it.sub}<div class="flex flex-wrap gap-1 mt-2">${it.flag?`<span class="tag" style="color:#fbbf24;border-color:#fbbf24" title="Could not confirm the exact wording or attribution">${it.flag}</span>`:''}${it.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>
-        <div class="flex flex-none">
-          ${it.custom?'<button class="ib del" data-h="del" title="Delete my quote" aria-label="Delete quote"><i data-lucide="trash-2" class="w-4 h-4"></i></button>':''}
-          <button class="ib" data-h="copy" title="Copy to clipboard" aria-label="Copy to clipboard"><i data-lucide="copy" class="w-4 h-4"></i></button>
-          <button class="ib ${fav?'on':''}" data-h="fav" title="${fav?'Remove favorite':'Add to favorites'}" aria-pressed="${fav}" aria-label="Favorite"><i data-lucide="star" class="w-4 h-4"></i></button>
-        </div></div></div>`;
+      <div class="text-sm acc2">${it.sub}<div class="flex flex-wrap gap-1 mt-2">${it.flag?`<span class="tag" style="color:#fbbf24;border-color:#fbbf24" title="Could not confirm the exact wording or attribution">${it.flag}</span>`:''}${it.tags.map(t=>`<span class="tag">${t}</span>`).join('')}${(S.itemTags[it.id]||[]).map(x=>Tags.chip(x)).join('')}</div></div>
+      ${this.actions(it)}</div>`;
   },
   favs(boxId,kind){
     const list=S.favs.map(id=>this.items[id]).filter(i=>i&&i.kind===kind);
     $(boxId).innerHTML=`<div class="card" style="border-color:var(--acc2)"><h2 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 acc2"></i>Favorites <span class="mute font-normal text-sm">(${list.length})</span></h2>`+
       (list.length?`<div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">${list.map(i=>this.card(i)).join('')}</div>`:'<p class="mute text-sm">Tap the star on any card to save it here.</p>')+'</div>';
   },
-  renderAll(){this.index();Bible.render();Logic.render();icons();},
+  renderAll(){this.index();Bible.render();Logic.render();Goals.renderWisdom();Eastern.render();icons();},
   act(e){
     const b=e.target.closest('[data-h]');if(!b)return;
     const id=b.closest('[data-id]').dataset.id,it=this.items[id];if(!it)return;
@@ -452,7 +625,7 @@ const Hub={
     const ta=$(id);ta.value=S[key]||'';let t;
     ta.addEventListener('input',()=>{S[key]=ta.value;clearTimeout(t);t=setTimeout(()=>{Store.save();$(savedId).textContent='Saved '+new Date().toLocaleTimeString();},300);});
   },
-  init(){document.addEventListener('click',e=>{if(e.target.closest('#view-bible,#view-logic'))this.act(e);});}
+  init(){document.addEventListener('click',e=>{if(e.target.closest('#view-bible,#view-logic,#view-eastern'))this.act(e);});}
 };
 
 const Bible={
@@ -492,6 +665,307 @@ const Logic={
   }
 };
 
+/* ===== Tags (goals, verses, quotes) ===== */
+const Tags={
+  colors:['#f87171','#fb923c','#fbbf24','#34d399','#22d3ee','#60a5fa','#a78bfa','#f472b6'],
+  color:'#60a5fa',target:null,
+  get:id=>S.tags.find(t=>t.id===id),
+  chip(id){const t=this.get(id);return t?`<span class="tagchip" style="color:${t.color};border-color:${t.color};background:${t.color}22">${esc(t.name)}</span>`:'';},
+  list(t){return t.kind==='goal'?((S.goals.find(g=>g.id===t.id)||{}).tags||[]):(S.itemTags[t.id]||[]);},
+  renderBar(){
+    $('tagBar').innerHTML=`<button class="chip ${S.tagFilter?'':'active'}" data-tf="">All tags</button>`+S.tags.map(t=>`<button class="chip" data-tf="${t.id}" style="${S.tagFilter===t.id?`color:${t.color};border-color:${t.color};background:${t.color}22`:''}"><span class="dot" style="background:${t.color}"></span>${esc(t.name)}</button>`).join('')+'<button class="chip" data-tf="__new">+ New tag</button>';
+  },
+  renderPop(){
+    const tgt=this.target,cur=tgt?this.list(tgt):[];
+    $('tagPop').innerHTML=`<div class="font-semibold text-sm mb-2">${tgt?'Tags':'Manage tags'}</div>`+
+      (S.tags.length?`<div class="grid gap-1 mb-3">${S.tags.map(t=>`<div class="flex items-center gap-2"><label class="flex items-center gap-2 flex-1 text-sm cursor-pointer">${tgt?`<input type="checkbox" data-tt="${t.id}" ${cur.includes(t.id)?'checked':''}>`:''}<span class="dot" style="background:${t.color};margin:0"></span>${esc(t.name)}</label><button class="ib del" data-td="${t.id}" aria-label="Delete tag"><i data-lucide="trash-2" class="w-3 h-3"></i></button></div>`).join('')}</div>`:'<p class="mute text-xs mb-3">No tags yet. Create one below.</p>')+
+      `<input type="text" id="tgName" placeholder="New tag name" maxlength="20" aria-label="New tag name"><div class="flex gap-2 my-2">${this.colors.map(c=>`<button class="ib" data-tc="${c}" aria-label="Color" style="padding:0;width:1.35rem;height:1.35rem;border-radius:50%;background:${c};outline:${c===this.color?'2px solid var(--text)':'0'};outline-offset:2px"></button>`).join('')}</div><button class="btn btn-acc" data-tn>Create tag</button>`;
+    icons();
+  },
+  open(btn,tgt){
+    this.target=tgt;this.renderPop();const pop=$('tagPop');pop.classList.remove('hidden');
+    const r=btn.getBoundingClientRect();
+    pop.style.left=Math.max(8,Math.min(r.left+scrollX,innerWidth-pop.offsetWidth-8))+'px';pop.style.top=(r.bottom+scrollY+6)+'px';
+  },
+  close(){$('tagPop').classList.add('hidden');this.target=null;},
+  sync(){Store.save();Goals.render();Hub.renderAll();if(!$('tagPop').classList.contains('hidden'))this.renderPop();},
+  create(){
+    const n=$('tgName').value.trim();if(!n)return UI.toast('Name the tag first','alert-circle');
+    const t={id:uid(),name:n,color:this.color};S.tags.push(t);
+    if(this.target){const a=this.list(this.target);this.target.kind==='goal'?S.goals.find(g=>g.id===this.target.id).tags.push(t.id):(S.itemTags[this.target.id]=[...a,t.id]);}
+    this.sync();UI.toast('Tag created','tag');
+  },
+  toggle(tid){
+    const t=this.target;if(!t)return;
+    if(t.kind==='goal'){const g=S.goals.find(x=>x.id===t.id);g.tags=g.tags.includes(tid)?g.tags.filter(x=>x!==tid):[...g.tags,tid];}
+    else{const a=S.itemTags[t.id]||[];S.itemTags[t.id]=a.includes(tid)?a.filter(x=>x!==tid):[...a,tid];}
+    this.sync();
+  },
+  remove(tid){
+    if(!confirm('Delete this tag everywhere?'))return;
+    S.tags=S.tags.filter(t=>t.id!==tid);S.goals.concat(S.archived).forEach(g=>g.tags=(g.tags||[]).filter(x=>x!==tid));
+    Object.keys(S.itemTags).forEach(k=>S.itemTags[k]=S.itemTags[k].filter(x=>x!==tid));
+    if(S.tagFilter===tid)S.tagFilter=null;this.sync();
+  },
+  init(){
+    document.addEventListener('click',e=>{
+      const tf=e.target.closest('[data-tf]');
+      if(tf){if(tf.dataset.tf==='__new')return this.open(tf,null);S.tagFilter=tf.dataset.tf||null;Store.save();return Goals.render();}
+      const b=e.target.closest('[data-tag]');
+      if(b){const h=b.closest('[data-g],[data-id]');return this.open(b,{kind:b.dataset.tag,id:h.dataset.g||h.dataset.id});}
+      const pop=e.target.closest('#tagPop');
+      if(!pop){this.close();return;}
+      const d=e.target.closest('[data-td]'),c=e.target.closest('[data-tc]');
+      if(d)this.remove(d.dataset.td);
+      else if(c){this.color=c.dataset.tc;pop.querySelectorAll('[data-tc]').forEach(x=>x.style.outline=x.dataset.tc===this.color?'2px solid var(--text)':'0');}
+      else if(e.target.closest('[data-tn]'))this.create();
+    });
+    $('tagPop').addEventListener('change',e=>{if(e.target.dataset.tt)this.toggle(e.target.dataset.tt);});
+    $('tagPop').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='tgName')this.create();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')this.close();});
+  }
+};
+
+/* ===== Focus timer ===== */
+const Timer={
+  dur:1500,rem:1500,run:false,end:0,last:0,iv:null,n:0,
+  fmt:s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`,
+  step(){for(const g of S.goals){const s=g.steps.find(x=>x.id===S.timerTask);if(s)return{g,s};}return null;},
+  drawTime(){$('tDisp').textContent=this.fmt(this.rem);$('tBar').style.width=(100-this.rem/this.dur*100)+'%';document.title=this.run?`${this.fmt(this.rem)} · Focus`:'Focus Dashboard';},
+  drawBtn(){$('tToggle').innerHTML=`<i data-lucide="${this.run?'pause':'play'}" class="w-4 h-4"></i>${this.run?'Pause':'Start'}`;icons();},
+  set(min){
+    min=Math.max(1,Math.min(180,Math.round(+min)||25));this.pause();this.dur=this.rem=min*60;this.drawTime();
+    document.querySelectorAll('#tPresets .chip').forEach(c=>c.classList.toggle('active',+c.dataset.m===min));
+  },
+  start(){if(this.rem<=0)this.rem=this.dur;this.run=true;this.end=Date.now()+this.rem*1000;this.last=Date.now();this.iv=setInterval(()=>this.tick(),500);this.drawBtn();},
+  pause(){if(!this.run)return;this.run=false;clearInterval(this.iv);Store.save();Goals.paintFocus();this.drawBtn();this.drawTime();},
+  reset(){this.pause();this.rem=this.dur;this.drawTime();},
+  tick(){
+    const now=Date.now(),d=Math.min((now-this.last)/1000,this.rem);this.last=now;
+    const t=this.step();if(t){t.s.focusSec=(t.s.focusSec||0)+d;t.g.touched=today();}
+    S.focusLog[today()]=(S.focusLog[today()]||0)+d;
+    this.rem=Math.max(0,Math.round((this.end-now)/1000));this.drawTime();
+    if(++this.n%10===0)Store.save();
+    if(this.rem<=0)this.finish();
+  },
+  finish(){
+    const t=this.step();if(t)t.s.sessions=(t.s.sessions||0)+1;
+    this.pause();this.rem=this.dur;this.drawTime();Goals.paintFocus();this.beep();
+    UI.toast(t?`Session complete: ${t.s.text}`:'Focus session complete','timer');
+  },
+  beep(){try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+.6);}catch(e){}},
+  renderTasks(){
+    const opts=[];S.goals.forEach(g=>g.steps.filter(s=>!s.done).forEach(s=>opts.push([s.id,`${g.title} › ${s.text}`])));
+    if(S.timerTask&&!opts.some(o=>o[0]===S.timerTask))S.timerTask=null;
+    $('tTask').innerHTML='<option value="">No sub-task attached</option>'+opts.map(o=>`<option value="${o[0]}" ${o[0]===S.timerTask?'selected':''}>${esc(o[1])}</option>`).join('');
+  },
+  init(){
+    $('tToggle').addEventListener('click',()=>this.run?this.pause():this.start());
+    $('tReset').addEventListener('click',()=>this.reset());
+    $('tPresets').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c)this.set(c.dataset.m);});
+    $('tSet').addEventListener('click',()=>this.set($('tCustom').value));
+    $('tTask').addEventListener('change',e=>{S.timerTask=e.target.value||null;Store.save();});
+    this.drawTime();this.drawBtn();
+  }
+};
+
+/* ===== Reflection ===== */
+const Review={
+  fields:[['rWins','wins','Successes'],['rObs','obs','Obstacles'],['rLes','les','Lessons learned'],['rRev','rev','Review']],
+  streak(){
+    const k=t=>new Date(t).toISOString().slice(0,10);
+    const days=new Set([...S.reflections.map(r=>k(r.ts)),...Object.keys(S.focusLog).filter(d=>S.focusLog[d]>60)]);
+    let n=0;const d=new Date();if(!days.has(k(d)))d.setDate(d.getDate()-1);
+    while(days.has(k(d))){n++;d.setDate(d.getDate()-1);}return n;
+  },
+  render(){
+    const sessions=S.goals.concat(S.archived).reduce((n,g)=>n+g.steps.reduce((m,s)=>m+(s.sessions||0),0),0);
+    const stat=(l,v)=>`<div class="card"><div class="mute text-xs">${l}</div><div class="text-2xl font-semibold acc">${v}</div></div>`;
+    $('reflStats').innerHTML=stat('Focus today',Math.round((S.focusLog[today()]||0)/60)+'m')+stat('Sessions completed',sessions)+stat('Goals completed',S.goals.filter(g=>Goals.done(g)).length+S.archived.length)+stat('Reflections logged',S.reflections.length)+stat('Day streak',this.streak()+'d');
+    $('reflList').innerHTML=S.reflections.length?S.reflections.map(r=>`<div class="card" data-r="${r.id}">
+      <div class="flex items-center justify-between mb-3"><span class="acc font-semibold text-sm">${new Date(r.ts).toLocaleString()}</span><button class="ib del" data-rd aria-label="Delete entry"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
+      <div class="grid gap-3 md:grid-cols-2">${this.fields.filter(f=>r[f[1]]).map(f=>`<div><div class="mute text-xs mb-1">${f[2]}</div><div class="text-sm" style="white-space:pre-wrap">${esc(r[f[1]])}</div></div>`).join('')}</div></div>`).join('')
+      :'<div class="card mute text-center">No entries yet. Write your first end-of-day review above.</div>';
+    icons();
+  },
+  init(){
+    $('rSave').addEventListener('click',()=>{
+      const r={id:uid(),ts:Date.now()};this.fields.forEach(f=>r[f[1]]=$(f[0]).value.trim());
+      if(!this.fields.some(f=>r[f[1]]))return UI.toast('Write something before saving','alert-circle');
+      S.reflections.unshift(r);Store.save();this.fields.forEach(f=>$(f[0]).value='');this.render();UI.toast('Reflection saved','notebook-pen');
+    });
+    $('reflList').addEventListener('click',e=>{const b=e.target.closest('[data-rd]');if(!b||!confirm('Delete this entry?'))return;S.reflections=S.reflections.filter(r=>r.id!==b.closest('[data-r]').dataset.r);Store.save();this.render();});
+    this.render();
+  }
+};
+
+/* ===== Media & ambient noise ===== */
+const Media={
+  embed(url){
+    const id=(url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/))([\w-]{11})/)||[])[1],list=(url.match(/[?&]list=([\w-]+)/)||[])[1];
+    return id?`https://www.youtube-nocookie.com/embed/${id}${list?'?list='+list:''}`:list?`https://www.youtube-nocookie.com/embed/videoseries?list=${list}`:null;
+  },
+  render(){
+    $('mediaGrid').innerHTML=S.media.length?S.media.map(m=>{
+      const e=this.embed(m.url);
+      const body=e?`<div class="vid inset" data-embed="${esc(e)}" style="display:grid;place-items:center"><button class="btn btn-acc" data-m="play"><i data-lucide="play" class="w-4 h-4"></i>Play here</button></div>`
+        :m.type==='audio'?`<audio controls preload="none" src="${esc(m.url)}" style="width:100%"></audio>`:'<p class="mute text-sm">No embedded player for this link. Use the open icon.</p>';
+      return `<div class="card" data-id="${m.id}"><div class="flex items-start justify-between gap-2 mb-3"><div class="min-w-0"><div class="font-semibold break-words mb-1">${esc(m.title)}</div><span class="tag">${m.type==='video'?'Video':'Audio'}</span></div>
+        <div class="flex flex-none"><a class="ib" href="${esc(m.url)}" target="_blank" rel="noopener noreferrer" title="Open in new tab" aria-label="Open in new tab"><i data-lucide="external-link" class="w-4 h-4"></i></a><button class="ib del" data-m="del" aria-label="Delete"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>${body}</div>`;
+    }).join(''):'<div class="card mute text-center md:col-span-2 xl:col-span-3">No media saved yet. Add a YouTube video or an audio stream above.</div>';
+    icons();
+  },
+  add(){
+    const url=$('mUrl').value.trim();if(!/^https?:\/\//i.test(url))return UI.toast('Enter a full link starting with http:// or https://','alert-circle');
+    let host='';try{host=new URL(url).hostname;}catch(e){return UI.toast('That link is not valid','alert-circle');}
+    S.media.unshift({id:uid(),type:$('mType').value,title:$('mTitle').value.trim()||host,url});
+    Store.save();$('mTitle').value='';$('mUrl').value='';this.render();UI.toast('Saved to Media Hub','music');
+  },
+  ctx:null,src:null,gain:null,
+  noise(kind){
+    this.stop();this.ctx=this.ctx||new AudioContext();const c=this.ctx;
+    const buf=c.createBuffer(1,c.sampleRate*2,c.sampleRate),d=buf.getChannelData(0);let last=0;
+    for(let i=0;i<d.length;i++){const w=Math.random()*2-1;if(kind==='brown'){last=(last+.02*w)/1.02;d[i]=last*3.5;}else d[i]=w*.5;}
+    this.src=c.createBufferSource();this.src.buffer=buf;this.src.loop=true;this.gain=c.createGain();this.gain.gain.value=+$('ambVol').value;
+    this.src.connect(this.gain).connect(c.destination);this.src.start();UI.toast(kind+' noise playing','volume-2');
+  },
+  stop(){try{this.src&&this.src.stop();}catch(e){}this.src=null;},
+  init(){
+    $('mAdd').addEventListener('click',()=>this.add());
+    $('mUrl').addEventListener('keydown',e=>{if(e.key==='Enter')this.add();});
+    $('mediaGrid').addEventListener('click',e=>{
+      const b=e.target.closest('[data-m]');if(!b)return;
+      if(b.dataset.m==='del'){S.media=S.media.filter(m=>m.id!==b.closest('[data-id]').dataset.id);Store.save();this.render();}
+      else{const box=b.closest('[data-embed]'),u=box.dataset.embed;box.outerHTML=`<iframe class="vid" src="${u}${u.includes('?')?'&':'?'}autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Video player"></iframe>`;}
+    });
+    document.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>b.dataset.n==='stop'?this.stop():this.noise(b.dataset.n)));
+    $('ambVol').addEventListener('input',e=>{if(this.gain)this.gain.gain.value=+e.target.value;});
+    this.render();
+  }
+};
+
+/* ===== Buddhist parables ===== */
+Data.parables=[
+{title:'The Empty Cup',src:'Zen tale',tags:['Mindfulness'],story:`A scholar visited a Zen master to learn about Zen. The master served tea and kept pouring after the scholar's cup was full, until tea ran over the table. "Stop!" cried the scholar. "It is full." The master said, "Like this cup, you are full of your own opinions. How can I show you Zen unless you first empty your cup?"`,lesson:`Learning begins when you set down what you already think you know. Beginner's mind keeps attention open.`},
+{title:'The Second Arrow',src:'Sallatha Sutta',tags:['Internal Control','Mindfulness'],story:`The Buddha asked a student whether a person struck by an arrow feels pain. Yes. And if struck by a second arrow right after? Even more. He explained that life delivers the first arrow, such as loss, illness, or criticism. We fire the second ourselves, through worry, blame, and resentment about the first.`,lesson:`You rarely control the first arrow. You always have some say over the second.`},
+{title:'Kisa Gotami and the Mustard Seed',src:'Buddhist tradition',tags:['Impermanence','Detachment'],story:`Kisa Gotami carried her dead child through the village begging for medicine. The Buddha agreed to help if she brought a mustard seed from a house where no one had ever died. She knocked on every door. Every home had known loss. By evening she understood she was not alone, buried her child, and returned to learn.`,lesson:`Impermanence is universal. Seeing that turns private despair into shared understanding.`},
+{title:'Are You Still Carrying Her?',src:'Zen tale: Tanzan and Ekido',tags:['Detachment','Mindfulness'],story:`Two monks reached a muddy crossing where a woman stood unable to cross. Tanzan carried her over and set her down. Hours later Ekido burst out, "Monks should not touch women. Why did you do that?" Tanzan replied, "I left her at the river. Are you still carrying her?"`,lesson:`Finish the moment and put it down. Carrying old events costs you the present.`},
+{title:'The Poisoned Arrow',src:'Culamalunkya Sutta',tags:['Focus'],story:`A monk demanded that the Buddha answer big questions about the universe before he would practice. The Buddha compared him to a man shot with a poisoned arrow who refuses treatment until he learns the archer's name, caste, and what wood the bow was made from. That man would die before getting answers.`,lesson:`Do the urgent, practical thing first. Endless speculation is a form of delay.`},
+{title:'Is That So?',src:'Zen tale: Hakuin',tags:['Detachment','Internal Control'],story:`When a neighbor's daughter became pregnant, she named the master Hakuin as the father. Angry parents confronted him. He said only, "Is that so?" and raised the child with care. A year later she confessed the real father. The parents apologized and asked for the child back. Hakuin handed him over, saying again, "Is that so?"`,lesson:`Your peace does not depend on praise or blame, because you cannot control either.`},
+{title:'The Farmer and His Horse',src:'Taoist tale',tags:['Impermanence','Detachment'],story:`A farmer's horse ran away. Neighbors said, "Bad luck!" He answered, "Maybe." The horse returned with wild horses. "Good luck!" "Maybe." His son broke a leg riding one. "Bad luck!" "Maybe." Soldiers then came to conscript young men and passed the injured son by.`,lesson:`Events keep changing their meaning. Hold judgments lightly and keep acting well.`},
+{title:'The Burning House',src:'Lotus Sutra',tags:['Compassion','Mindfulness'],story:`A father came home to find his house on fire while his children played inside, absorbed in their toys and deaf to his warnings. So he called out that the carts they had always wanted were waiting outside. They ran out at once and were saved.`,lesson:`Meet people where they are. A skillful teacher uses the language the listener can actually hear.`},
+{title:'The Blind Men and the Elephant',src:'Udana',tags:['Humility'],story:`Several blind men each touched a different part of an elephant. One felt the trunk and said a snake, another the leg and said a tree, another the side and said a wall. Each insisted the others were wrong, and the argument grew heated while the whole animal stood quietly among them.`,lesson:`Each of us holds a partial view. Certainty about a piece is not knowledge of the whole.`},
+{title:'The Raft',src:'Alagaddupama Sutta',tags:['Detachment'],story:`A traveler reached a wide river and built a raft from branches to cross it. Once safely on the far shore, he did not hoist the raft onto his head and carry it inland. He thanked it and walked on. The Buddha compared his own teachings to that raft.`,lesson:`Methods and beliefs are tools for crossing. Use them fully, then do not mistake them for the destination.`},
+{title:'The Gift Refused',src:'Akkosa Sutta',tags:['Internal Control'],story:`A man berated the Buddha with insults. The Buddha asked him, "If you offered a gift and your guest declined it, whose would it be?" "Mine," the man said. The Buddha replied that he declined the insults in the same way, so they remained with the one who offered them.`,lesson:`Another person can offer you anger. You decide whether to accept it.`},
+{title:'The Gates of Paradise',src:'Zen tale: Hakuin',tags:['Internal Control','Humility'],story:`A samurai asked the master Hakuin whether heaven and hell really exist. Hakuin mocked him as a scruffy beggar who could never be a warrior. Furious, the samurai drew his sword. "Here open the gates of hell," said Hakuin. The samurai froze, bowed, and sheathed his blade. "Here open the gates of paradise," said Hakuin.`,lesson:`Heaven and hell are often the states we move between within a single minute, by our own reactions.`},
+{title:'The Tiger and the Strawberry',src:'Zen tale',tags:['Mindfulness','Impermanence'],story:`A man chased by a tiger jumped off a cliff and caught a vine. Another tiger waited below, and two mice began gnawing the vine above him. Then he noticed a wild strawberry growing within reach. He picked it, tasted it, and said, "How sweet."`,lesson:`Trouble is real, but the only moment you can actually taste is this one.`},
+{title:'Angulimala',src:'Pali Canon',tags:['Compassion','Internal Control'],story:`The bandit Angulimala terrorized the countryside. When the Buddha walked calmly down the road, the bandit chased him but could not catch him. "Stop, ascetic!" he shouted. The Buddha said, "I have stopped. You stop too: give up harming others." The bandit threw down his weapons and asked to follow him.`,lesson:`A person is not fixed by their worst chapter. Steady calm can open a door that force never could.`},
+{title:'Tending the Sick Monk',src:'Vinaya',tags:['Compassion'],story:`The Buddha found a monk lying ill in his own mess, ignored by his companions because he was of no use to them. The Buddha washed him, changed his bedding, and cared for him. He then told the community that whoever wished to look after him should look after the sick.`,lesson:`Care for the person in front of you is not a distraction from the path. It is the path.`},
+{title:'Cook Ding Carves the Ox',src:'Zhuangzi',tags:['Focus','Mindfulness'],story:`Cook Ding carved an ox for his lord with movements as smooth as a dance. He explained that after years of practice he no longer saw the whole ox, only its natural gaps, and let the blade glide through them. His knife stayed sharp for nineteen years. At a tricky joint, he slowed down and gave it complete attention.`,lesson:`Mastery is attention refined by practice. Work with the grain of the task, and slow down where it is hard.`},
+{title:'The Useless Tree',src:'Zhuangzi',tags:['Detachment','Humility'],story:`A carpenter passed a huge gnarled oak and dismissed it as useless timber. That night the tree appeared in his dream and replied that useful trees are cut down young, while its crooked uselessness is exactly what let it grow old and shelter thousands.`,lesson:`Do not measure your worth only by what others can extract from you. Some of the best protection is not being what the world wants to consume.`}
+];
+
+Data.sayings=[
+{by:'Dhammapada',src:'Verse 1, paraphrased',cat:'Early Buddhist Teachings',tags:['Mindfulness','Internal Control'],text:'The mind leads every action. What you habitually think shapes who you become.'},
+{by:'Dhammapada',src:'Verse 5, paraphrased',cat:'Early Buddhist Teachings',tags:['Compassion'],text:'Hatred is never ended by hatred. Only love ends it. This is an ancient law.'},
+{by:'Dhammapada',src:'Verse 160, paraphrased',cat:'Early Buddhist Teachings',tags:['Internal Control'],text:'You are your own refuge. Who else could be?'},
+{by:'Dhammapada',src:'Verse 81, paraphrased',cat:'Early Buddhist Teachings',tags:['Detachment','Internal Control'],text:'As a solid rock is not shaken by the wind, the wise are not moved by praise or blame.'},
+{by:'Dhammapada',src:'Verse 76, paraphrased',cat:'Early Buddhist Teachings',tags:['Humility'],text:'If you meet a wise person who points out your faults, treat them like someone who reveals hidden treasure.'},
+{by:'Dhammapada',src:'Verse 63, paraphrased',cat:'Early Buddhist Teachings',tags:['Humility'],text:'A fool who knows his foolishness is already wise. The fool who thinks himself wise is the real fool.'},
+{by:'Bhaddekaratta Sutta',src:'Majjhima Nikaya 131, paraphrased',cat:'Early Buddhist Teachings',tags:['Mindfulness','Focus'],text:'Do not chase the past or wait anxiously for the future. The past is gone and the future has not come. See clearly what is here now.'},
+{by:'Mahaparinibbana Sutta',src:'Last teachings, paraphrased',cat:'Early Buddhist Teachings',tags:['Internal Control'],text:'Be a lamp to yourself. Hold to the truth as your lamp.'},
+{by:'Mahaparinibbana Sutta',src:'Last words, paraphrased',cat:'Early Buddhist Teachings',tags:['Impermanence','Perseverance'],text:'All conditioned things pass away. Strive on with diligence.'},
+{by:'Lao Tzu',src:'Tao Te Ching, ch. 64, paraphrased',cat:'Tao Te Ching & Zhuangzi',tags:['Perseverance'],text:'A journey of a thousand miles begins beneath your feet.'},
+{by:'Lao Tzu',src:'Tao Te Ching, ch. 63, paraphrased',cat:'Tao Te Ching & Zhuangzi',tags:['Perseverance','Focus'],text:'Do the difficult things while they are easy, and the great things while they are small.'},
+{by:'Lao Tzu',src:'Tao Te Ching, ch. 33, paraphrased',cat:'Tao Te Ching & Zhuangzi',tags:['Internal Control'],text:'Knowing others is intelligence. Knowing yourself is true wisdom. Mastering others is strength. Mastering yourself is real power.'},
+{by:'Lao Tzu',src:'Tao Te Ching, ch. 8, paraphrased',cat:'Tao Te Ching & Zhuangzi',tags:['Humility'],text:'Water benefits all things without competing, and settles in the low places others avoid. That is why it is close to the Way.'},
+{by:'Lao Tzu',src:'Tao Te Ching, ch. 33, paraphrased',cat:'Tao Te Ching & Zhuangzi',tags:['Detachment'],text:'One who knows what is enough is rich.'},
+{by:'Lao Tzu',src:'Tao Te Ching, ch. 81, paraphrased',cat:'Tao Te Ching & Zhuangzi',tags:['Compassion'],text:'The sage does not hoard. The more they give to others, the more they have.'},
+{by:'Zen proverb',src:'Traditional',cat:'Zen Sayings',tags:['Mindfulness','Focus'],text:'Before enlightenment, chop wood and carry water. After enlightenment, chop wood and carry water.'},
+{by:'Zen teaching',src:'Traditional, paraphrased',cat:'Zen Sayings',tags:['Focus'],text:'When walking, just walk. When eating, just eat. Give the whole attention to whatever you are doing.'},
+{by:'Zenrin Kushu',src:'Zen saying, paraphrased',cat:'Zen Sayings',tags:['Detachment','Impermanence'],text:'Sitting quietly, doing nothing, spring comes and the grass grows by itself.'},
+{by:'Japanese proverb',src:'Nanakorobi yaoki',cat:'Zen Sayings',tags:['Perseverance'],text:'Fall down seven times, get up eight.'}
+];
+Data.teachings=[
+{icon:'compass',title:'The Four Noble Truths',pts:['Life contains suffering and dissatisfaction.','Suffering arises from craving and clinging.','Suffering can come to an end.','The Eightfold Path leads to that end.']},
+{icon:'route',title:'The Noble Eightfold Path',pts:['Wisdom: right view and right intention.','Ethics: right speech, right action, right livelihood.','Mental discipline: right effort, right mindfulness, right concentration.']},
+{icon:'waves',title:'Three Marks of Existence',pts:['Impermanence: all conditions change.','Unsatisfactoriness: clinging to what changes brings suffering.','Non-self: there is no fixed, separate self to defend.']},
+{icon:'scale',title:'The Middle Way',pts:['Avoid the extremes of indulgence and harsh self-denial.','Practice steady, sustainable discipline.','Test every habit by its effect on your mind and conduct.']},
+{icon:'shield-check',title:'The Five Precepts',pts:['Refrain from harming living beings.','Refrain from taking what is not given.','Refrain from sexual misconduct.','Refrain from false speech.','Refrain from intoxicants that cloud the mind.']},
+{icon:'wind',title:'Wu Wei (Taoist)',pts:['Act in harmony with circumstances instead of forcing them.','Effort without strain, skill without self-consciousness.','Yield like water, which wears down stone.']}
+];
+const Eastern={
+  tags:['Mindfulness','Detachment','Focus','Impermanence','Internal Control','Compassion','Humility','Perseverance'],
+  day(){const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);},
+  dailySaying(){return Hub.items['w'+(this.day()%Data.sayings.length)];},
+  match(i,q,tag){return(!tag||i.tags.includes(tag))&&(!q||(i.text+' '+i.label+' '+i.tags.join(' ')).toLowerCase().includes(q));},
+  parableHtml(n,open){
+    const p=Data.parables[n],it=Hub.items['p'+n];if(!it)return'';
+    return `<details class="card story" data-id="p${n}" ${open?'open':''}><summary class="cursor-pointer font-semibold">${esc(p.title)} <span class="mute font-normal text-sm">· ${esc(p.src)}</span></summary>
+      <p class="mt-3 text-sm" style="line-height:1.8">${esc(p.story)}</p><p class="mt-3 text-sm acc2"><b>Reflection:</b> ${esc(p.lesson)}</p>
+      <div class="flex flex-wrap gap-1 mt-3 mb-3">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}${(S.itemTags[it.id]||[]).map(x=>Tags.chip(x)).join('')}</div>${Hub.actions(it)}</details>`;
+  },
+  render(){
+    if(!this.tag)return;
+    const q=$('eastSearch').value.trim().toLowerCase(),tag=this.tag();
+    const pars=Data.parables.map((p,i)=>i).filter(i=>this.match(Hub.items['p'+i],q,tag));
+    $('parables').innerHTML=pars.length?pars.map(i=>this.parableHtml(i)).join(''):'<div class="card mute text-center">No stories match. Try a different word or clear the tag filter.</div>';
+    const say=Data.sayings.map((x,i)=>Hub.items['w'+i]).filter(i=>this.match(i,q,tag));
+    $('sayings').innerHTML=say.length?Hub.grouped(say):'<div class="card mute text-center">No sayings match.</div>';
+    $('dailyParable').innerHTML=this.parableHtml(this.day()%Data.parables.length,true);
+    Hub.favs('easternFavs','wisdom');
+  },
+  init(){
+    this.tag=Hub.tags('eastTags',this.tags,()=>{this.render();icons();});
+    $('eastSearch').addEventListener('input',()=>{this.render();icons();});
+    $('expandAll').addEventListener('click',()=>document.querySelectorAll('#parables details').forEach(d=>d.open=true));
+    $('collapseAll').addEventListener('click',()=>document.querySelectorAll('#parables details').forEach(d=>d.open=false));
+    $('teachings').innerHTML=Data.teachings.map(p=>`<div class="card"><div class="flex items-center gap-2 mb-3"><i data-lucide="${p.icon}" class="acc"></i><h3 class="font-semibold">${esc(p.title)}</h3></div><ul class="mute text-sm" style="list-style:disc;padding-left:1.1rem;line-height:1.7">${p.pts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
+    Hub.note('easternNote','easternNote','easternSaved');
+  }
+};
+const Breath={
+  pats:{box:['Box breathing (4-4-4-4)',[['Breathe in',4],['Hold',4],['Breathe out',4],['Hold',4]]],relax:['Relaxing breath (4-7-8)',[['Breathe in',4],['Hold',7],['Breathe out',8]]],calm:['Calm breath (4-6)',[['Breathe in',4],['Breathe out',6]]]},
+  on:false,iv:null,i:0,left:0,
+  pat(){return this.pats[$('breathPat').value][1];},
+  phase(){
+    const p=this.pat()[this.i%this.pat().length],c=$('breathCircle');
+    this.left=p[1];$('breathLabel').textContent=p[0];$('breathCount').textContent=this.left;
+    c.style.transition=`transform ${p[1]}s linear`;
+    if(p[0].endsWith('in'))c.style.transform='scale(1)';else if(p[0].endsWith('out'))c.style.transform='scale(.55)';
+  },
+  start(){this.on=true;this.i=0;this.phase();this.iv=setInterval(()=>{if(--this.left<=0){this.i++;this.phase();}else $('breathCount').textContent=this.left;},1000);$('breathBtn').textContent='Stop';},
+  stop(){
+    if(!this.on)return;this.on=false;clearInterval(this.iv);
+    const c=$('breathCircle');c.style.transition='transform .6s';c.style.transform='scale(.55)';
+    $('breathLabel').textContent='Ready';$('breathCount').textContent='';$('breathBtn').textContent='Start';
+  },
+  init(){
+    $('breathPat').innerHTML=Object.entries(this.pats).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join('');
+    $('breathBtn').addEventListener('click',()=>this.on?this.stop():this.start());
+    $('breathPat').addEventListener('change',()=>this.stop());
+  }
+};
+
+/* ===== Themes & app wiring ===== */
+const Theme={
+  names:{slate:'Slate / Dark',obsidian:'Obsidian',amber:'Warm Gold / Amber',forest:'Deep Forest',navy:'Navy Blue'},
+  apply(t){if(!this.names[t])t='slate';document.body.dataset.theme=t;S.theme=t;$('themeSel').value=t;},
+  init(){
+    $('themeSel').innerHTML=Object.entries(this.names).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+    this.apply(S.theme);
+    $('themeSel').addEventListener('change',e=>{this.apply(e.target.value);Store.save();UI.toast('Theme: '+this.names[S.theme],'palette');});
+  }
+};
+const App={
+  migrate(){
+    S.goals.concat(S.archived).forEach(g=>{g.pri=g.pri||2;g.why=g.why||'';g.tags=g.tags||[];g.created=g.created||today();g.touched=g.touched||g.created;});
+    ['tags','archived','media','reflections','customQuotes','favs'].forEach(k=>{if(!Array.isArray(S[k]))S[k]=[];});
+    S.itemTags=S.itemTags||{};S.focusLog=S.focusLog||{};
+  },
+  refresh(){this.migrate();Theme.apply(S.theme);Goals.render();Logic.renderChecks();Hub.renderAll();Review.render();Media.render();Timer.renderTasks();}
+};
+
 /* ===== Backup / Restore ===== */
 const Backup={
   init(){
@@ -507,7 +981,7 @@ const Backup={
         if(!confirm('Importing replaces your current data. Continue?'))return;
         Object.assign(S,Store.defaults(),d);Store.save();
         $('bibleNote').value=S.bibleNote||'';$('logicNote').value=S.logicNote||'';
-        Goals.render();Logic.renderChecks();Hub.renderAll();UI.toast('Data imported','upload');
+        App.refresh();UI.toast('Data imported','upload');
       }catch(err){UI.toast('Import failed: choose a JSON backup from this dashboard','alert-circle');}};
       r.readAsText(f);e.target.value='';
     });
@@ -515,7 +989,7 @@ const Backup={
 };
 
 /* ===== Boot ===== */
-UI.init();Hub.index();Goals.init();Hub.init();Bible.init();Logic.init();Backup.init();Hub.renderAll();icons();
+App.migrate();UI.init();Theme.init();Hub.index();Goals.init();Hub.init();Bible.init();Logic.init();Eastern.init();Breath.init();Tags.init();Timer.init();Review.init();Media.init();Backup.init();Hub.renderAll();icons();
 </script>
 </body>
 </html>
