@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Focus Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.383.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--line:#334155;--text:#e2e8f0;--mute:#94a3b8;--bad:#f87171;--acc:#fbbf24;--acc2:#fbbf24;--accd:rgba(251,191,36,.12)}
+body[data-view=bible]{--acc:#60a5fa;--acc2:#fbbf24;--accd:rgba(96,165,250,.13)}
+body[data-view=logic]{--acc:#34d399;--acc2:#22d3ee;--accd:rgba(52,211,153,.12)}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;margin:0;transition:background .3s}
+.side{background:var(--card);border-bottom:1px solid var(--line)}
+@media(min-width:768px){.side{border-bottom:0;border-right:1px solid var(--line);width:15rem;flex:none;position:sticky;top:0;height:100vh}}
+.navwrap{display:none;flex-direction:column;gap:.25rem;margin-top:.75rem}
+.navwrap.open{display:flex}
+@media(min-width:768px){.navwrap{display:flex}#menuBtn{display:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.15rem;transition:border-color .2s,transform .2s}
+.card:hover{border-color:#475569}
+.inset{background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.mute{color:var(--mute)}.acc{color:var(--acc)}.acc2{color:var(--acc2)}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem .8rem;border-radius:8px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:.85rem;cursor:pointer;transition:border-color .15s,background .15s,color .15s;white-space:nowrap}
+.btn:hover{border-color:var(--acc)}
+.btn-acc{background:var(--acc);color:#0f172a;border-color:var(--acc);font-weight:600}
+.btn-acc:hover{filter:brightness(1.1)}
+.ib{background:none;border:0;color:var(--mute);cursor:pointer;padding:.3rem;border-radius:6px;display:inline-flex;transition:color .15s,background .15s}
+.ib:hover:not(:disabled){color:var(--text);background:var(--card2)}
+.ib:disabled{opacity:.25;cursor:default}
+.ib.on{color:var(--acc2)}.ib.on svg{fill:currentColor}
+.ib.del:hover{color:var(--bad)}
+input[type=text],input[type=search],textarea,select{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.55rem .75rem;width:100%;font-size:.9rem;outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus,.btn:focus-visible,.ib:focus-visible,.nav:focus-visible{border-color:var(--acc);box-shadow:0 0 0 3px var(--accd)}
+input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:none;width:1.15rem;height:1.15rem;border:2px solid #475569;border-radius:6px;cursor:pointer;display:inline-grid;place-content:center;background:transparent;transition:background .2s,border-color .2s,transform .2s}
+input[type=checkbox]::after{content:"";width:.28rem;height:.55rem;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);transition:transform .2s;margin-top:-2px}
+input[type=checkbox]:checked{background:var(--acc);border-color:var(--acc);transform:scale(1.08)}
+input[type=checkbox]:checked::after{transform:rotate(45deg) scale(1)}
+.nav{display:flex;align-items:center;gap:.7rem;width:100%;padding:.7rem .9rem;border-radius:10px;border:1px solid transparent;background:none;color:var(--mute);cursor:pointer;text-align:left;font-size:.95rem;transition:all .2s}
+.nav:hover{color:var(--text);background:var(--card2)}
+.nav.active{color:var(--text);background:var(--accd);border-color:var(--acc)}
+.chip{padding:.3rem .75rem;border-radius:999px;border:1px solid var(--line);background:none;color:var(--mute);font-size:.8rem;cursor:pointer;transition:all .15s}
+.chip:hover{color:var(--text)}
+.chip.active{background:var(--accd);color:var(--acc);border-color:var(--acc)}
+.tag{font-size:.72rem;padding:.1rem .5rem;border-radius:999px;background:var(--card2);border:1px solid var(--line);color:var(--mute)}
+.badge{display:inline-block;font-size:.76rem;font-weight:600;padding:.15rem .6rem;border-radius:999px;background:var(--accd);color:var(--acc);border:1px solid var(--acc);transition:all .3s}
+.badge.full{background:var(--acc);color:#0f172a}
+.bar{height:8px;background:var(--bg);border-radius:99px;overflow:hidden}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--acc),#f97316);border-radius:99px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.step{border-top:1px solid var(--line);transition:background .2s,opacity .2s}
+.step-text{background:linear-gradient(currentColor,currentColor) no-repeat 0 58%/0 1px;transition:background-size .35s,color .3s}
+.step.done .step-text{background-size:100% 1px;color:var(--mute)}
+.acts{opacity:.55;transition:opacity .15s}.step:hover .acts,.acts:focus-within{opacity:1}
+.pin-chip{display:inline-flex;align-items:center;gap:.5rem;background:var(--accd);border:1px solid var(--acc);border-radius:8px;padding:.25rem .35rem .25rem .6rem;font-size:.82rem;max-width:18rem}
+.serif{font-family:Georgia,"Times New Roman",serif;font-size:1.03rem;line-height:1.6}
+.view{display:none}
+.view.active{display:block;animation:vin .32s ease both}
+@keyframes vin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#toast{position:fixed;bottom:1.25rem;left:50%;transform:translate(-50%,12px);background:var(--card2);border:1px solid var(--acc);padding:.6rem 1rem;border-radius:10px;font-size:.88rem;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.4);display:flex;gap:.5rem;align-items:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body data-view="goals">
+<div class="flex flex-col md:flex-row" style="min-height:100vh">
+
+  <aside class="side p-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2 px-1"><i data-lucide="compass" class="acc"></i><span class="font-semibold text-lg">Focus Dashboard</span></div>
+      <button class="ib" id="menuBtn" aria-label="Toggle menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+    </div>
+    <nav class="navwrap md:mt-6" id="nav" aria-label="Main">
+      <button class="nav active" data-view="goals">🎯 <span>Goal Engine</span></button>
+      <button class="nav" data-view="bible">✝️ <span>Biblical Wisdom</span></button>
+      <button class="nav" data-view="logic">🗽 <span>Logic &amp; Freedom</span></button>
+    </nav>
+  </aside>
+
+  <div class="flex-1 min-w-0 flex flex-col">
+    <header class="px-4 md:px-8 py-4" style="border-bottom:1px solid var(--line)">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div><div id="clockDate" class="font-semibold"></div><div id="clockTime" class="mute text-sm"></div></div>
+        <div class="flex gap-2">
+          <button class="btn" id="exportBtn" aria-label="Backup / Export Data"><i data-lucide="download" class="w-4 h-4"></i><span>Backup / Export Data</span></button>
+          <button class="btn" id="importBtn" aria-label="Import Data"><i data-lucide="upload" class="w-4 h-4"></i><span>Import Data</span></button>
+          <input type="file" id="importFile" accept="application/json" class="hidden">
+        </div>
+      </div>
+      <div class="inset mt-4 px-4 py-3">
+        <div class="flex items-center gap-2 mb-2 text-sm font-semibold"><i data-lucide="target" class="w-4 h-4" style="color:#fbbf24"></i>Daily Focus <span class="mute font-normal" id="focusCount"></span></div>
+        <div id="focusList" class="flex flex-wrap gap-2"></div>
+      </div>
+    </header>
+
+    <main class="flex-1 px-4 md:px-8 py-6">
+      <section id="view-goals" class="view active">
+        <h1 class="text-2xl font-semibold mb-4">Goal Engine</h1>
+        <div class="flex gap-2 mb-5 max-w-2xl">
+          <input type="text" id="goalInput" placeholder="Quick add: type a goal and press Enter" maxlength="80" aria-label="Quick add goal" autofocus>
+          <button class="btn btn-acc" id="addGoal"><i data-lucide="plus" class="w-4 h-4"></i>Add</button>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+          <div class="flex gap-2" id="goalFilters">
+            <button class="chip active" data-f="all">All Goals</button>
+            <button class="chip" data-f="active">Active</button>
+            <button class="chip" data-f="completed">Completed</button>
+          </div>
+          <button class="btn" id="clearDone"><i data-lucide="archive" class="w-4 h-4"></i>Clear Completed Goals</button>
+        </div>
+        <div id="goalGrid" class="grid gap-5 grid-cols-1 xl:grid-cols-2"></div>
+      </section>
+
+      <section id="view-bible" class="view">
+        <h1 class="text-2xl font-semibold mb-5">Biblical Wisdom</h1>
+        <div id="bibleFavs" class="mb-6"></div>
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <input type="search" id="bibleSearch" placeholder="Search verses, saints, popes, topics" class="max-w-sm" aria-label="Search verses">
+          <div class="flex flex-wrap gap-2" id="bibleTags"></div>
+        </div>
+        <div id="bibleGrid"></div>
+        <div class="card mt-8">
+          <h2 class="font-semibold mb-1">Daily Reflection Notepad</h2>
+          <p class="mute text-sm mb-3">Log prayers, scripture takeaways, or reflections. Saved automatically.</p>
+          <textarea id="bibleNote" rows="6" placeholder="What stood out to you today?"></textarea>
+          <div class="mute text-xs mt-2" id="bibleSaved"></div>
+        </div>
+      </section>
+
+      <section id="view-logic" class="view">
+        <h1 class="text-2xl font-semibold mb-5">Logic &amp; Freedom</h1>
+        <div class="grid gap-5 grid-cols-1 lg:grid-cols-3 mb-8" id="principles"></div>
+        <div id="logicFavs" class="mb-6"></div>
+        <h2 class="text-lg font-semibold mb-1">Quote deck</h2>
+        <p class="mute text-sm mb-3">Libertarian and classical liberal thinkers, plus self-mastery quotes you supplied. Items marked Unverified have no confirmed source, so check the wording before quoting anyone.</p>
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          <input type="search" id="quoteSearch" placeholder="Filter by quote, author, or source" class="max-w-sm" aria-label="Filter quotes">
+          <div class="flex flex-wrap gap-2" id="quoteTags"></div>
+        </div>
+        <div id="quoteGrid" class="mb-5"></div>
+        <details class="card mb-8" id="addQuote">
+          <summary class="cursor-pointer font-semibold">Add your own quote <span class="mute font-normal text-sm">(e.g. a verified Stefan Molyneux quote)</span></summary>
+          <div class="grid gap-3 mt-4 md:grid-cols-2">
+            <textarea id="qText" rows="3" placeholder="Quote text" class="md:col-span-2"></textarea>
+            <input type="text" id="qBy" placeholder="Author" value="Stefan Molyneux">
+            <input type="text" id="qSrc" placeholder="Source (book, video, date)">
+            <select id="qTag"><option>Logic</option><option>Ethics</option><option>Self-Ownership</option><option>Freedom</option></select>
+            <button class="btn btn-acc" id="qSave" style="justify-content:center"><i data-lucide="plus" class="w-4 h-4"></i>Save quote</button>
+          </div>
+        </details>
+        <div class="card" style="border-color:var(--acc)">
+          <h2 class="font-semibold mb-1 flex items-center gap-2"><i data-lucide="check-square" class="w-4 h-4 acc"></i>Daily Logic Checkpoint</h2>
+          <p class="mute text-sm mb-4">Tick each question once you have honestly answered it. Ticks reset daily.</p>
+          <div id="checkpoints" class="grid gap-2 mb-4"></div>
+          <textarea id="logicNote" rows="5" placeholder="Where did principle and habit disagree today?"></textarea>
+          <div class="mute text-xs mt-2" id="logicSaved"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== Utilities ===== */
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date().toISOString().slice(0,10);
+const icons=()=>window.lucide&&lucide.createIcons();
+
+/* ===== Content data ===== */
+const V=(ref,cat,tags,text,ver)=>({ref,cat,tags,text,ver:ver||'ESV',part:'Scripture'});
+const P=(by,cat,tags,text,flag)=>({by,cat,tags,text,flag,part:'Saints & Popes'});
+let _m=0;const M=(cat,tags,text)=>({id:'m'+(++_m),text,by:'Stefan Molyneux',src:'Source not verified',flag:'Unverified',cat,tags});
+const D1='Diligence, Work Ethic & Stewardship',D2='Perseverance, Grit & Trials',D3='Wisdom, Discernment & Truth',D4='Courage & Duty';
+const Data={
+verses:[
+V(`Proverbs 13:4`,D1,['Work','Discipline'],`The soul of the sluggard craves and gets nothing, while the soul of the diligent is richly supplied.`),
+V(`Colossians 3:23`,D1,['Work'],`Whatever you do, work heartily, as for the Lord and not for men.`),
+V(`Proverbs 22:29`,D1,['Work'],`Do you see a man skillful in his work? He will stand before kings; he will not stand before obscure men.`),
+V(`Proverbs 10:4`,D1,['Work'],`A slack hand causes poverty, but the hand of the diligent makes rich.`),
+V(`Luke 16:10`,D1,['Work','Virtue'],`One who is faithful in a very little is also faithful in much, and one who is dishonest in a very little is also dishonest in much.`),
+V(`Galatians 6:4`,D1,['Work','Discipline'],`But let each one test his own work, and then his reason to boast will be in himself alone and not in his neighbor.`),
+V(`Proverbs 21:5`,D1,['Work','Wisdom'],`The plans of the diligent lead surely to abundance, but everyone who is hasty comes only to poverty.`),
+V(`Proverbs 12:24`,D1,['Work','Discipline'],`The hand of the diligent will rule, while the slothful will be put to forced labor.`),
+V(`Luke 14:28`,D1,['Work','Wisdom'],`For which of you, desiring to build a tower, does not first sit down and count the cost, whether he has enough to complete it?`),
+V(`Proverbs 16:3`,D1,['Work','Wisdom'],`Commit thy works unto the LORD, and thy thoughts shall be established.`,'KJV'),
+V(`Galatians 6:9`,D2,['Perseverance','Work'],`And let us not grow weary of doing good, for in due season we will reap, if we do not give up.`),
+V(`James 1:2-4`,D2,['Perseverance'],`Count it all joy, my brothers, when you meet trials of various kinds, for you know that the testing of your faith produces steadfastness. And let steadfastness have its full effect, that you may be perfect and complete, lacking in nothing.`),
+V(`Romans 5:3-4`,D2,['Perseverance'],`Not only that, but we rejoice in our sufferings, knowing that suffering produces endurance, and endurance produces character, and character produces hope.`),
+V(`Hebrews 12:1-2`,D2,['Perseverance'],`Let us run with endurance the race that is set before us, looking to Jesus, the founder and perfecter of our faith.`),
+V(`2 Timothy 4:7`,D2,['Perseverance','Courage'],`I have fought the good fight, I have finished the race, I have kept the faith.`),
+V(`Proverbs 24:16`,D2,['Perseverance'],`For the righteous falls seven times and rises again, but the wicked are stumbled by calamity.`),
+V(`James 1:12`,D2,['Perseverance'],`Blessed is the man who remains steadfast under trial, for when he has stood the test he will receive the crown of life.`),
+V(`Romans 12:12`,D2,['Perseverance'],`Rejoice in hope, be patient in tribulation, be constant in prayer.`),
+V(`Proverbs 4:7`,D3,['Wisdom'],`The beginning of wisdom is this: Get wisdom, and whatever you get, get insight.`),
+V(`Romans 12:2`,D3,['Wisdom','Truth'],`Do not be conformed to this world, but be transformed by the renewal of your mind, that by testing you may discern what is the will of God, what is good and acceptable and perfect.`),
+V(`Proverbs 3:5-6`,D3,['Wisdom'],`Trust in the Lord with all your heart, and do not lean on your own understanding. In all your ways acknowledge him, and he will make straight your paths.`),
+V(`Philippians 4:8`,D3,['Wisdom','Truth','Virtue'],`Finally, brothers, whatever is true, whatever is honorable, whatever is just, whatever is pure, whatever is lovely, whatever is commendable, if there is any excellence, if there is anything worthy of praise, think about these things.`),
+V(`Proverbs 14:15`,D3,['Wisdom'],`The simple believes everything, but the prudent gives thought to his steps.`),
+V(`James 3:17`,D3,['Wisdom','Virtue'],`But the wisdom from above is first pure, then peaceable, gentle, open to reason, full of mercy and good fruits, impartial and sincere.`),
+V(`Proverbs 15:14`,D3,['Wisdom','Truth'],`The heart of him who has understanding seeks knowledge, but the mouths of fools feed on folly.`),
+V(`1 Thessalonians 5:21`,D3,['Wisdom','Truth'],`But test everything; hold fast what is good.`),
+V(`Matthew 7:24`,D3,['Wisdom','Work'],`Therefore whosoever heareth these sayings of mine, and doeth them, I will liken him unto a wise man, which built his house upon a rock.`,'KJV'),
+V(`Joshua 1:9`,D4,['Courage'],`Have I not commanded you? Be strong and courageous. Do not be frightened, and do not be dismayed, for the Lord your God is with you wherever you go.`),
+V(`1 Corinthians 16:13`,D4,['Courage'],`Be watchful, stand firm in the faith, act like men, be strong.`),
+V(`2 Timothy 1:7`,D4,['Courage'],`For God gave us a spirit not of fear but of power and love and self-control.`),
+V(`Deuteronomy 31:6`,D4,['Courage'],`Be strong and courageous. Do not fear or be in dread of them, for it is the Lord your God who goes with you.`),
+V(`Psalm 27:14`,D4,['Courage','Perseverance'],`Wait for the Lord; be strong, and let your heart take courage; wait for the Lord!`),
+V(`Philippians 1:27`,D4,['Courage','Virtue'],`Only let your manner of life be worthy of the gospel of Christ... standing firm in one spirit, with one mind striving side by side for the faith of the gospel.`),
+V(`Ezekiel 22:30`,D4,['Courage'],`And I sought for a man among them who should build up the wall and stand in the breach before me for the land.`)
+],
+bibleTags:['Work','Discipline','Perseverance','Courage','Wisdom','Truth','Virtue'],
+saints:[
+P(`St. Padre Pio`,`Spiritual Combat & Discipline`,['Discipline','Perseverance'],`The life of a Christian is nothing other than a perpetual struggle against self; there is no flowering of the soul to the beauty of its perfection except at the price of pain.`,'Verify source'),
+P(`St. John of the Cross`,`Spiritual Combat & Discipline`,['Discipline'],`The soul that desires God to surrender Himself to it entirely must surrender itself entirely to Him without keeping anything for itself.`),
+P(`Pope St. John Paul II`,`Spiritual Combat & Discipline`,['Discipline','Virtue'],`The ultimate test of your greatness is the way you treat every human being, but first, how you master your own passions.`,'Verify source'),
+P(`St. Josemaría Escrivá`,`Spiritual Combat & Discipline`,['Discipline','Courage'],`Don't say, 'That's the way I am... it's my character.' It's your lack of character. Be a man.`),
+P(`St. Teresa of Avila`,`Spiritual Combat & Discipline`,['Discipline','Virtue'],`Accustom yourself to make many acts of love, for they enkindle and melt the soul.`),
+P(`St. Augustine`,`Spiritual Combat & Discipline`,['Discipline'],`He that is dominant over his passions is a king; he that is a slave to them is an underdog.`,'Verify source'),
+P(`St. Francis de Sales`,`Spiritual Combat & Discipline`,['Discipline','Courage'],`In the morning, prepare your soul for a day of battle. Foresee what temptations you may encounter and resolve to resist them firmly.`),
+P(`St. Thomas Aquinas`,`Virtue & Character Formation`,['Virtue'],`Virtue is a good habit consonant with man's nature.`),
+P(`St. Josemaría Escrivá`,`Virtue & Character Formation`,['Virtue'],`Let your behavior and your conversation be such that everyone who sees or speaks to you can say: This person reads the life of Jesus Christ.`),
+P(`Pope Leo XIII`,`Virtue & Character Formation`,['Virtue','Truth'],`The world has heard enough of the so-called 'rights of man.' Let it hear something of the rights of God.`,'Verify source'),
+P(`St. Francis de Sales`,`Virtue & Character Formation`,['Virtue','Work'],`Be who you are and be that well, so that you may bring honor to the Master Craftsman whose handiwork you are.`),
+P(`St. Augustine`,`Virtue & Character Formation`,['Virtue','Truth'],`Wrong is wrong even if everybody is doing it. Right is right even if nobody is doing it.`,'Verify source'),
+P(`St. Philip Neri`,`Virtue & Character Formation`,['Virtue','Discipline'],`A man without a habit of prayer is like a soldier without weapons in the heat of battle.`),
+P(`St. Ambrose`,`Virtue & Character Formation`,['Virtue','Work'],`Virtue does not consist in speculative knowledge, but in practical performance.`),
+P(`St. Josemaría Escrivá`,`Diligence & the Dignity of Work`,['Work','Discipline'],`An hour of study, for a modern apostle, is an hour of prayer.`),
+P(`St. Thérèse of Lisieux`,`Diligence & the Dignity of Work`,['Work','Virtue'],`Our Lord does not look so much at the greatness of our actions, or even at their difficulty, as at the love with which we do them.`),
+P(`Pope St. John Paul II (Laborem Exercens)`,`Diligence & the Dignity of Work`,['Work'],`Work is a good thing for man—a good thing for his humanity—because through work man not only transforms nature, adapting it to his own needs, but he also achieves fulfillment as a human being.`),
+P(`St. Benedict`,`Diligence & the Dignity of Work`,['Work','Discipline'],`Idleness is the enemy of the soul. Therefore, the brethren should have specified periods for manual labor as well as for prayerful reading.`),
+P(`St. Francis of Assisi`,`Diligence & the Dignity of Work`,['Work'],`All the brothers should try to be industrious in good works, for it is written: 'Be always doing something good so that the devil may find you occupied.'`),
+P(`St. Catherine of Siena`,`Diligence & the Dignity of Work`,['Work','Courage'],`Do not satisfy yourself with small things, for God expects great things from you!`),
+P(`Pope St. John Paul II (Fides et Ratio)`,`Truth, Reason & Freedom`,['Truth','Wisdom'],`Faith and reason are like two wings on which the human spirit rises to the contemplation of truth.`),
+P(`St. Thomas Aquinas`,`Truth, Reason & Freedom`,['Truth','Wisdom'],`The truth of our faith becomes a matter of ridicule for the infidel if any Catholic, not gifted with the necessary scientific learning, presents as dogma what scientific research shows to be false.`,'Verify source'),
+P(`Pope Benedict XVI`,`Truth, Reason & Freedom`,['Truth'],`We are moving toward a dictatorship of relativism which does not recognize anything as definitive and has as its highest value one's own ego and desires.`),
+P(`St. Justin Martyr`,`Truth, Reason & Freedom`,['Truth','Wisdom'],`Reason dictates that those who are truly pious and philosophical should honor and love the truth alone, refusing to follow the opinions of the ancients if they are worthless.`),
+P(`St. Thomas More`,`Truth, Reason & Freedom`,['Courage','Truth'],`I die the King's good servant, and God's first.`),
+P(`Pope St. John Paul II`,`Truth, Reason & Freedom`,['Truth','Virtue'],`Freedom consists not in doing what we like, but in having the right to do what we ought.`)
+],
+principles:[
+{icon:'scale',title:'Universally Preferable Behavior (UPB)',pts:['Ethics treated as a rational, testable field rather than opinion.','A moral rule must not contradict itself when applied to everyone.','Test any theory: could it be universal without logical conflict?']},
+{icon:'user-check',title:'Self-Ownership & Voluntaryism',pts:['Each person has sovereignty over their own body and choices.','Property rights follow from self-ownership.','Human interactions are best based on consent, not coercion.']},
+{icon:'heart-handshake',title:'Virtue & Peaceful Relationships',pts:['Emotional honesty and rigorous self-reflection.','Reason and negotiation over force.','Raising children as free minds through respect and example.']}],
+quotes:[
+{id:'q1',text:'The State is the great fictitious entity by which everyone endeavors to live at the expense of everyone else.',by:'Frédéric Bastiat',src:'The State (1848)',tags:['Freedom','Ethics']},
+{id:'q2',text:'Life, faculties, production—in other words individuality, liberty, property—this is man.',by:'Frédéric Bastiat',src:'The Law (1850)',tags:['Self-Ownership','Freedom']},
+{id:'q3',text:'The libertarian creed rests upon one central axiom: that no man or group of men may aggress against the person or property of anyone else.',by:'Murray Rothbard',src:'For a New Liberty (1973)',tags:['Ethics','Self-Ownership']},
+{id:'q4',text:'Over himself, over his own body and mind, the individual is sovereign.',by:'John Stuart Mill',src:'On Liberty (1859)',tags:['Self-Ownership','Freedom']},
+{id:'q5',text:'Force and mind are opposites; morality ends where a gun begins.',by:'Ayn Rand',src:'Atlas Shrugged (1957)',tags:['Ethics','Logic']},
+{id:'q6',text:'The curious task of economics is to demonstrate to men how little they really know about what they imagine they can design.',by:'Friedrich Hayek',src:'The Fatal Conceit (1988)',tags:['Logic']},
+{id:'q7',text:'The more the state plans, the more difficult planning becomes for the individual.',by:'Friedrich Hayek',src:'The Road to Serfdom (1944)',tags:['Freedom','Logic']},
+{id:'q8',text:'A society that puts equality before freedom will end up with neither.',by:'Milton Friedman',src:'Attributed; Free to Choose era (c. 1980)',tags:['Freedom']},
+{id:'q9',text:'The art of economics consists in looking not merely at the immediate but at the longer effects of any act or policy.',by:'Henry Hazlitt',src:'Economics in One Lesson (1946)',tags:['Logic']},
+{id:'q10',text:'Government, even in its best state, is but a necessary evil; in its worst state, an intolerable one.',by:'Thomas Paine',src:'Common Sense (1776)',tags:['Freedom']},
+{id:'q11',text:'Resolve to serve no more, and you are at once freed.',by:'Étienne de La Boétie',src:'Discourse on Voluntary Servitude (c. 1550; translations vary)',tags:['Freedom','Self-Ownership']},
+{id:'t1',text:'A moral rule that cannot apply to everyone without contradiction is not a universal ethic.',by:'Theme: UPB',src:'Paraphrased summary, not a quotation',tags:['Logic','Ethics']},
+{id:'t2',text:'Persuasion respects a mind; force bypasses it. Prefer persuasion.',by:'Theme: Voluntaryism',src:'Paraphrased summary, not a quotation',tags:['Ethics','Freedom']}],
+quoteTags:['Logic','Ethics','Self-Ownership','Freedom','Work','Growth'],
+prompts:['Is this action voluntary?','Am I acting out of principle or unexamined habit?','Is my goal logically consistent with my core values?','Would I accept this standard if applied to me?']
+};
+
+Data.quotes.push(
+M(`Wealth & the Labor of Self-Creation`,['Work','Growth'],`Wealth is not a matter of money; it is a matter of character. If you do not build the inner discipline, no amount of external resources will ever save you.`),
+M(`Wealth & the Labor of Self-Creation`,['Work','Ethics'],`Your work is the physical evidence of your self-respect. To do a half-hearted job is to tell yourself that your life and time are not worth executing beautifully.`),
+M(`Wealth & the Labor of Self-Creation`,['Work','Logic','Growth'],`The ultimate form of work is the work you perform on your own mind, weeding out the false premises that cause you to trip over your own potential.`),
+M(`Wealth & the Labor of Self-Creation`,['Work','Growth'],`Production is the antidote to anxiety. When you stop consuming the noise of the world and start creating value, your existential dread evaporates.`),
+M(`Wealth & the Labor of Self-Creation`,['Work','Growth'],`Success is not an accident; it is the logical, cumulative consequence of a thousand unseen daily disciplines.`),
+M(`Wealth & the Labor of Self-Creation`,['Work','Freedom'],`A man who takes pride in his labor can never truly be enslaved, because his mind remains anchored to the joy of mastery.`),
+M(`Confronting the Mirror`,['Growth','Logic'],`You cannot fix a life you are refusing to look at. Self-improvement begins with a brutal, clear-eyed audit of your own failures.`),
+M(`Confronting the Mirror`,['Growth','Ethics'],`Blaming your parents, your environment, or the state for your current stagnation is just an elaborate psychological strategy to avoid the hard work of changing today.`),
+M(`Confronting the Mirror`,['Growth','Logic'],`The degree to which you can tolerate the temporary discomfort of being wrong is the exact degree to which you can grow.`),
+M(`Confronting the Mirror`,['Growth'],`We do not fail because our goals are too high and we miss them; we fail because our standards are too low and we settle for them.`),
+M(`Confronting the Mirror`,['Growth','Ethics'],`If you hide your flaws from yourself, you ensure they remain permanent fixtures of your personality.`),
+M(`Confronting the Mirror`,['Growth','Logic'],`The ultimate test of personal growth is not how you feel when things are easy, but how rapidly you regain your rational footing when your life hits a wall.`),
+M(`Grit, Resilience & Breaking Generational Chains`,['Growth'],`Every time you choose courage over comfort, you rewrite your own neural code. You become a slightly different, stronger creature.`),
+M(`Grit, Resilience & Breaking Generational Chains`,['Growth','Self-Ownership'],`The trauma and bad habits handed down to you by previous generations stop being an excuse the moment you become an adult. From that point on, you are the author.`),
+M(`Grit, Resilience & Breaking Generational Chains`,['Growth','Ethics'],`Pain is an incredible teacher, but only if you have the intellectual honesty to ask what part you played in causing it.`),
+M(`Grit, Resilience & Breaking Generational Chains`,['Growth','Work'],`The path of least resistance is what makes rivers, and men, crooked. Choose the steep hill.`),
+M(`Grit, Resilience & Breaking Generational Chains`,['Growth','Freedom'],`To achieve exceptional results, you must become comfortable with the isolation that comes from walking away from the mediocre crowd.`),
+M(`Grit, Resilience & Breaking Generational Chains`,['Growth','Work'],`Do not ask for a lighter load; build a stronger spine. The world will always have weight to carry.`)
+);
+
+/* ===== Store (localStorage) ===== */
+const Store={
+  KEY:'focus_dashboard_v1',
+  defaults:()=>({goals:[],archived:[],filter:'all',bibleNote:'',logicNote:'',favs:[],customQuotes:[],checks:{date:today(),done:[]}}),
+  state:null,
+  load(){let s={};try{s=JSON.parse(localStorage.getItem(this.KEY))||{};}catch(e){}this.state=Object.assign(this.defaults(),s);return this.state;},
+  save(){try{localStorage.setItem(this.KEY,JSON.stringify(this.state));}catch(e){UI.toast('Storage unavailable: changes will not persist.');}}
+};
+const S=Store.load();
+
+/* ===== UI helpers: toast, clipboard, nav, clock ===== */
+const UI={
+  toast(msg,icon='check-circle'){const t=$('toast');t.innerHTML=`<i data-lucide="${icon}" class="w-4 h-4 acc"></i><span>${esc(msg)}</span>`;icons();t.classList.add('show');clearTimeout(this._t);this._t=setTimeout(()=>t.classList.remove('show'),2300);},
+  async copy(text){
+    try{await navigator.clipboard.writeText(text);}
+    catch(e){const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}ta.remove();if(!ok)return this.toast('Copy failed. Select the text manually.','alert-circle');}
+    this.toast('Copied to clipboard','clipboard-check');
+  },
+  show(v){
+    document.body.dataset.view=v;
+    document.querySelectorAll('.view').forEach(e=>e.classList.toggle('active',e.id==='view-'+v));
+    document.querySelectorAll('.nav').forEach(e=>e.classList.toggle('active',e.dataset.view===v));
+    $('nav').classList.remove('open');$('menuBtn').setAttribute('aria-expanded','false');
+    try{sessionStorage.setItem('fd_view',v);}catch(e){}
+  },
+  init(){
+    const tick=()=>{const d=new Date();$('clockDate').textContent=d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});$('clockTime').textContent=d.toLocaleTimeString();};
+    tick();setInterval(tick,1000);
+    document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>this.show(b.dataset.view)));
+    $('menuBtn').addEventListener('click',()=>{const o=$('nav').classList.toggle('open');$('menuBtn').setAttribute('aria-expanded',o);});
+    try{const v=sessionStorage.getItem('fd_view');if(v)this.show(v);}catch(e){}
+  }
+};
+
+/* ===== Goals ===== */
+const Goals={
+  prev:{},
+  pct:g=>g.steps.length?Math.round(g.steps.filter(s=>s.done).length/g.steps.length*100):0,
+  done:g=>g.steps.length>0&&g.steps.every(s=>s.done),
+  badge:g=>{const n=g.steps.length,d=g.steps.filter(s=>s.done).length;return n?`${d}/${n} Steps Completed - ${Goals.pct(g)}%`:'No steps yet';},
+  pinned:()=>S.goals.reduce((n,g)=>n+g.steps.filter(s=>s.pinned).length,0),
+  stepHtml(g,s,i){return `<li class="step flex items-center gap-3 py-2 ${s.done?'done':''}" data-s="${s.id}">
+    <input type="checkbox" data-a="toggle" ${s.done?'checked':''} aria-label="Complete step">
+    <span class="step-text flex-1 text-sm break-words">${esc(s.text)}</span>
+    <span class="acts flex">
+      <button class="ib" data-a="up" ${i===0?'disabled':''} title="Move up" aria-label="Move up"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>
+      <button class="ib" data-a="down" ${i===g.steps.length-1?'disabled':''} title="Move down" aria-label="Move down"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
+      <button class="ib ${s.pinned?'on':''}" data-a="pin" title="${s.pinned?'Unpin from':'Pin to'} Daily Focus" aria-label="Pin to Daily Focus"><i data-lucide="${s.pinned?'pin-off':'pin'}" class="w-4 h-4"></i></button>
+      <button class="ib del" data-a="delStep" title="Delete step" aria-label="Delete step"><i data-lucide="x" class="w-4 h-4"></i></button>
+    </span></li>`;},
+  render(){
+    document.querySelectorAll('#goalFilters .chip').forEach(c=>c.classList.toggle('active',c.dataset.f===S.filter));
+    const list=S.goals.filter(g=>S.filter==='all'||(S.filter==='completed'?this.done(g):!this.done(g)));
+    $('goalGrid').innerHTML=list.length?list.map(g=>`<article class="card" data-g="${g.id}">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <div class="min-w-0"><h3 class="font-semibold text-lg break-words mb-2">${esc(g.title)}</h3><span class="badge ${this.done(g)?'full':''}" data-badge>${this.badge(g)}</span></div>
+        <button class="ib del" data-a="delGoal" title="Delete goal" aria-label="Delete goal"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+      </div>
+      <div class="bar mb-4"><div data-bar data-w="${this.pct(g)}" style="width:${this.prev[g.id]??0}%"></div></div>
+      <ul class="mb-4" style="list-style:none;margin:0;padding:0">${g.steps.map((s,i)=>this.stepHtml(g,s,i)).join('')}</ul>
+      <div class="flex gap-2"><input type="text" class="stepInput" placeholder="Add a sub-step" maxlength="120" aria-label="New sub-step"><button class="btn" data-a="addStep"><i data-lucide="plus" class="w-4 h-4"></i>Add</button></div>
+    </article>`).join('')
+    :`<div class="card mute text-center xl:col-span-2" style="padding:2.5rem">${S.goals.length?'No goals match this filter.':'No goals yet. Type a goal above and press Enter.'}</div>`;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll('[data-bar]').forEach(b=>{b.style.width=b.dataset.w+'%';this.prev[b.closest('[data-g]').dataset.g]=+b.dataset.w;})));
+    this.renderFocus();icons();
+  },
+  paint(g){ /* in-place update so checkbox/bar/strike animate */
+    const card=document.querySelector(`#goalGrid [data-g="${g.id}"]`);if(!card)return;
+    const b=card.querySelector('[data-badge]');b.textContent=this.badge(g);b.classList.toggle('full',this.done(g));
+    const bar=card.querySelector('[data-bar]');bar.style.width=this.pct(g)+'%';this.prev[g.id]=this.pct(g);
+    g.steps.forEach(s=>{const li=card.querySelector(`[data-s="${s.id}"]`);if(li){li.classList.toggle('done',s.done);li.querySelector('input').checked=s.done;}});
+  },
+  renderFocus(){
+    const pins=[];S.goals.forEach(g=>g.steps.forEach(s=>s.pinned&&pins.push({g,s})));
+    $('focusCount').textContent=`(${pins.length}/3)`;
+    $('focusList').innerHTML=pins.length?pins.map(({g,s})=>`<span class="pin-chip ${s.done?'done':''}" data-g="${g.id}" data-s="${s.id}">
+      <input type="checkbox" data-a="toggle" ${s.done?'checked':''} aria-label="Complete focus step">
+      <span title="${esc(g.title)}" style="${s.done?'text-decoration:line-through;color:var(--mute)':''}">${esc(s.text)}</span>
+      <button class="ib" data-a="pin" aria-label="Unpin"><i data-lucide="x" class="w-3 h-3"></i></button></span>`).join('')
+      :'<span class="mute text-sm">Pin up to 3 sub-steps from your goals to keep them here.</span>';
+  },
+  add(){const t=$('goalInput').value.trim();if(!t)return;S.goals.unshift({id:uid(),title:t,steps:[]});$('goalInput').value='';Store.save();this.render();UI.toast('Goal added','target');},
+  clearDone(){
+    const done=S.goals.filter(g=>this.done(g));if(!done.length)return UI.toast('No completed goals to clear','info');
+    done.forEach(g=>g.steps.forEach(s=>s.pinned=false));
+    S.archived.push(...done.map(g=>Object.assign({},g,{archivedOn:today()})));
+    S.goals=S.goals.filter(g=>!this.done(g));Store.save();this.render();
+    UI.toast(`Archived ${done.length} completed goal${done.length>1?'s':''} (kept in your backup)`,'archive');
+  },
+  act(e){
+    const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
+    if(!['toggle','pin','up','down','delStep','delGoal','addStep'].includes(a))return;
+    const host=el.closest('[data-g]');const g=host&&S.goals.find(x=>x.id===host.dataset.g);if(!g)return;
+    const sEl=el.closest('[data-s]');const s=sEl&&g.steps.find(x=>x.id===sEl.dataset.s);
+    if(a==='toggle'){if(e.type!=='change'||!s)return;s.done=el.checked;Store.save();this.paint(g);this.renderFocus();icons();return;}
+    if(e.type==='change')return;
+    if(a==='delGoal'){if(!confirm('Delete this goal and all its steps?'))return;S.goals=S.goals.filter(x=>x!==g);}
+    else if(a==='addStep'){const i=host.querySelector('.stepInput'),t=i.value.trim();if(!t)return;g.steps.push({id:uid(),text:t,done:false,pinned:false});}
+    else if(!s)return;
+    else if(a==='delStep')g.steps=g.steps.filter(x=>x!==s);
+    else if(a==='up'||a==='down'){const i=g.steps.indexOf(s),j=a==='up'?i-1:i+1;if(j<0||j>=g.steps.length)return;[g.steps[i],g.steps[j]]=[g.steps[j],g.steps[i]];}
+    else if(a==='pin'){if(!s.pinned&&this.pinned()>=3)return UI.toast('Daily Focus holds 3 steps. Unpin one first.','pin');s.pinned=!s.pinned;}
+    Store.save();this.render();
+  },
+  init(){
+    $('addGoal').addEventListener('click',()=>this.add());
+    $('goalInput').addEventListener('keydown',e=>{if(e.key==='Enter')this.add();});
+    $('clearDone').addEventListener('click',()=>this.clearDone());
+    $('goalFilters').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;S.filter=c.dataset.f;Store.save();this.render();});
+    const h=e=>{if(e.target.closest('#goalGrid,#focusList'))this.act(e);};
+    document.addEventListener('click',e=>{if(!e.target.matches('input[type=checkbox]'))h(e);});
+    document.addEventListener('change',e=>{if(e.target.matches('input[type=checkbox]'))h(e);});
+    $('goalGrid').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('stepInput'))e.target.closest('article').querySelector('[data-a=addStep]').click();});
+    this.render();
+  }
+};
+
+/* ===== Reference hubs (shared card, copy, favorites) ===== */
+const Hub={
+  items:{},
+  bible:[],
+  index(){
+    this.items={};this.bible=[];
+    const add=(it,b)=>{this.items[it.id]=it;if(b)this.bible.push(it);};
+    Data.verses.forEach(v=>add({id:'v:'+v.ref,text:v.text,label:`${v.ref} (${v.ver})`,sub:`${esc(v.ref)} (${v.ver})`,tags:v.tags,kind:'verse',cat:v.cat,part:v.part},1));
+    Data.saints.forEach((s,i)=>add({id:'s'+i,text:s.text,label:s.by,sub:`<b>${esc(s.by)}</b>`,tags:s.tags,kind:'verse',q:1,flag:s.flag,cat:s.cat,part:s.part},1));
+    Data.quotes.concat(S.customQuotes).forEach(q=>add({id:q.id,text:q.text,label:q.by+(q.src?`, ${q.src}`:''),sub:`<b>${esc(q.by)}</b>${q.src?`<br><span class="mute">${esc(q.src)}</span>`:''}`,tags:q.tags,kind:'quote',custom:q.id[0]==='c',flag:q.flag,cat:q.cat||(q.id[0]==='c'?'My quotes':'Liberty & Reason')}));
+  },
+  grouped(list){
+    let part='';
+    return [...new Set(list.map(i=>i.cat))].map(c=>{
+      const items=list.filter(i=>i.cat===c);let h='';
+      if(items[0].part&&items[0].part!==part){part=items[0].part;h=`<h2 class="text-xl font-semibold mt-10 mb-1 acc2">${part}</h2>`;}
+      return h+`<h3 class="text-lg font-semibold mb-3 mt-6">${esc(c)}</h3><div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">${items.map(i=>this.card(i)).join('')}</div>`;
+    }).join('');
+  },
+  card(it){
+    const fav=S.favs.includes(it.id);
+    return `<div class="card flex flex-col justify-between gap-3" data-id="${esc(it.id)}">
+      <p class="serif">${it.kind==='quote'||it.q?'“'+esc(it.text)+'”':esc(it.text)}</p>
+      <div class="flex items-end justify-between gap-2">
+        <div class="text-sm acc2">${it.sub}<div class="flex flex-wrap gap-1 mt-2">${it.flag?`<span class="tag" style="color:#fbbf24;border-color:#fbbf24" title="Could not confirm the exact wording or attribution">${it.flag}</span>`:''}${it.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>
+        <div class="flex flex-none">
+          ${it.custom?'<button class="ib del" data-h="del" title="Delete my quote" aria-label="Delete quote"><i data-lucide="trash-2" class="w-4 h-4"></i></button>':''}
+          <button class="ib" data-h="copy" title="Copy to clipboard" aria-label="Copy to clipboard"><i data-lucide="copy" class="w-4 h-4"></i></button>
+          <button class="ib ${fav?'on':''}" data-h="fav" title="${fav?'Remove favorite':'Add to favorites'}" aria-pressed="${fav}" aria-label="Favorite"><i data-lucide="star" class="w-4 h-4"></i></button>
+        </div></div></div>`;
+  },
+  favs(boxId,kind){
+    const list=S.favs.map(id=>this.items[id]).filter(i=>i&&i.kind===kind);
+    $(boxId).innerHTML=`<div class="card" style="border-color:var(--acc2)"><h2 class="font-semibold mb-3 flex items-center gap-2"><i data-lucide="star" class="w-4 h-4 acc2"></i>Favorites <span class="mute font-normal text-sm">(${list.length})</span></h2>`+
+      (list.length?`<div class="grid gap-4 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">${list.map(i=>this.card(i)).join('')}</div>`:'<p class="mute text-sm">Tap the star on any card to save it here.</p>')+'</div>';
+  },
+  renderAll(){this.index();Bible.render();Logic.render();icons();},
+  act(e){
+    const b=e.target.closest('[data-h]');if(!b)return;
+    const id=b.closest('[data-id]').dataset.id,it=this.items[id];if(!it)return;
+    if(b.dataset.h==='copy')UI.copy(it.kind==='quote'?`“${it.text}” — ${it.label}`:`${it.text} — ${it.label}`);
+    else if(b.dataset.h==='fav'){const on=!S.favs.includes(id);S.favs=on?[...S.favs,id]:S.favs.filter(x=>x!==id);Store.save();this.renderAll();UI.toast(on?'Added to favorites':'Removed from favorites','star');}
+    else if(b.dataset.h==='del'){S.customQuotes=S.customQuotes.filter(q=>q.id!==id);S.favs=S.favs.filter(x=>x!==id);Store.save();this.renderAll();UI.toast('Quote deleted','trash-2');}
+  },
+  tags(boxId,tags,cb){
+    const box=$(boxId);let active=null;
+    box.innerHTML=tags.map(t=>`<button class="chip" data-t="${t}">${t}</button>`).join('');
+    box.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;active=active===c.dataset.t?null:c.dataset.t;box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x.dataset.t===active));cb();});
+    return()=>active;
+  },
+  note(id,key,savedId){
+    const ta=$(id);ta.value=S[key]||'';let t;
+    ta.addEventListener('input',()=>{S[key]=ta.value;clearTimeout(t);t=setTimeout(()=>{Store.save();$(savedId).textContent='Saved '+new Date().toLocaleTimeString();},300);});
+  },
+  init(){document.addEventListener('click',e=>{if(e.target.closest('#view-bible,#view-logic'))this.act(e);});}
+};
+
+const Bible={
+  render(){
+    const q=$('bibleSearch').value.trim().toLowerCase(),tag=this.tag();
+    const list=Hub.bible.filter(i=>(!tag||i.tags.includes(tag))&&(!q||(i.text+' '+i.label+' '+i.cat+' '+i.tags.join(' ')).toLowerCase().includes(q)));
+    $('bibleGrid').innerHTML=list.length?Hub.grouped(list):'<div class="card mute text-center">No passages match. Try a different search or clear the tag filter.</div>';
+    Hub.favs('bibleFavs','verse');
+  },
+  init(){this.tag=Hub.tags('bibleTags',Data.bibleTags,()=>{this.render();icons();});$('bibleSearch').addEventListener('input',()=>{this.render();icons();});Hub.note('bibleNote','bibleNote','bibleSaved');}
+};
+
+const Logic={
+  renderChecks(){
+    if(S.checks.date!==today()){S.checks={date:today(),done:[]};Store.save();}
+    $('checkpoints').innerHTML=Data.prompts.map((p,i)=>`<label class="inset flex items-center gap-3 p-3 cursor-pointer"><input type="checkbox" data-c="${i}" ${S.checks.done.includes(i)?'checked':''}><span class="text-sm">${esc(p)}</span></label>`).join('');
+  },
+  render(){
+    const q=$('quoteSearch').value.trim().toLowerCase(),tag=this.tag();
+    const all=Data.quotes.concat(S.customQuotes).map(x=>Hub.items[x.id]);
+    const list=all.filter(i=>(!tag||i.tags.includes(tag))&&(!q||(i.text+' '+i.label+' '+i.tags.join(' ')).toLowerCase().includes(q)));
+    $('quoteGrid').innerHTML=list.length?Hub.grouped(list):'<div class="card mute text-center md:col-span-2 xl:col-span-3">No quotes match. Try a different word or clear the tag filter.</div>';
+    Hub.favs('logicFavs','quote');
+  },
+  saveQuote(){
+    const text=$('qText').value.trim();if(!text)return UI.toast('Enter the quote text first','alert-circle');
+    S.customQuotes.push({id:'c'+uid(),text,by:$('qBy').value.trim()||'Unknown',src:$('qSrc').value.trim(),tags:[$('qTag').value]});
+    Store.save();$('qText').value='';$('qSrc').value='';Hub.renderAll();UI.toast('Quote saved','quote');
+  },
+  init(){
+    $('principles').innerHTML=Data.principles.map(p=>`<div class="card"><div class="flex items-center gap-2 mb-3"><i data-lucide="${p.icon}" class="acc"></i><h3 class="font-semibold">${esc(p.title)}</h3></div><ul class="mute text-sm" style="list-style:disc;padding-left:1.1rem;line-height:1.7">${p.pts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`).join('');
+    this.tag=Hub.tags('quoteTags',Data.quoteTags,()=>{this.render();icons();});
+    $('quoteSearch').addEventListener('input',()=>{this.render();icons();});
+    $('qSave').addEventListener('click',()=>this.saveQuote());
+    $('checkpoints').addEventListener('change',e=>{const i=+e.target.dataset.c;if(isNaN(i))return;S.checks.done=e.target.checked?[...new Set([...S.checks.done,i])]:S.checks.done.filter(x=>x!==i);Store.save();});
+    this.renderChecks();Hub.note('logicNote','logicNote','logicSaved');
+  }
+};
+
+/* ===== Backup / Restore ===== */
+const Backup={
+  init(){
+    $('exportBtn').addEventListener('click',()=>{
+      const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,2)],{type:'application/json'}));
+      a.download='focus-dashboard-'+today()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);UI.toast('Backup downloaded','download');
+    });
+    $('importBtn').addEventListener('click',()=>$('importFile').click());
+    $('importFile').addEventListener('change',e=>{
+      const f=e.target.files[0];if(!f)return;const r=new FileReader();
+      r.onload=()=>{try{
+        const d=JSON.parse(r.result);if(!d||!Array.isArray(d.goals))throw 0;
+        if(!confirm('Importing replaces your current data. Continue?'))return;
+        Object.assign(S,Store.defaults(),d);Store.save();
+        $('bibleNote').value=S.bibleNote||'';$('logicNote').value=S.logicNote||'';
+        Goals.render();Logic.renderChecks();Hub.renderAll();UI.toast('Data imported','upload');
+      }catch(err){UI.toast('Import failed: choose a JSON backup from this dashboard','alert-circle');}};
+      r.readAsText(f);e.target.value='';
+    });
+  }
+};
+
+/* ===== Boot ===== */
+UI.init();Hub.index();Goals.init();Hub.init();Bible.init();Logic.init();Backup.init();Hub.renderAll();icons();
+</script>
+</body>
+</html>
